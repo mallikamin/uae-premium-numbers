@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Print Partner QR Banners | uaepremiumnumbers.com</title>
+  <link rel="icon" href="../favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --surface: #F8F8F8;
+      --border: #30363D;
+      --gold: #ED1C24;
+      --gold-light: #FF4444;
+      --text: #E6EDF3;
+      --text-muted: #8B949E;
+      --green: #3FB950;
+      --red: #F85149;
+      --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ===== SCREEN STYLES ===== */
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .toolbar {
+      max-width: 900px;
+      margin: 0 auto 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .toolbar h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin-right: auto;
+    }
+    .toolbar select, .toolbar input {
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .toolbar select:focus, .toolbar input:focus { border-color: var(--gold); }
+    .toolbar select option { background: var(--bg); }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-gold { background: var(--gold); color: var(--bg); }
+    .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+
+    .status-bar {
+      max-width: 900px;
+      margin: 0 auto 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .status-bar .count { color: var(--gold); font-weight: 600; }
+
+    .loading {
+      text-align: center;
+      padding: 60px 0;
+      color: var(--text-muted);
+    }
+
+    /* Preview grid on screen */
+    .preview-grid {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .preview-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+    .preview-card .p-company {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: var(--gold);
+      font-size: 1rem;
+      margin-bottom: 1px;
+    }
+    .preview-card .p-owner {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 2px;
+    }
+    .preview-card .p-area {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-bottom: 8px;
+    }
+    .preview-card .p-qr {
+      background: #fff;
+      display: inline-block;
+      padding: 8px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    .preview-card .p-ref {
+      font-family: monospace;
+      color: var(--gold);
+      font-size: 0.8rem;
+    }
+    .preview-card .p-date {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      margin-top: 4px;
+    }
+    .preview-card.selected { border-color: var(--gold); }
+    .preview-card .p-check {
+      display: block;
+      margin: 8px auto 0;
+      accent-color: var(--gold);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      body { background: #fff; padding: 0; margin: 0; }
+      .toolbar, .status-bar, .preview-grid, .no-print { display: none !important; }
+      .print-pages { display: block !important; }
+
+      .print-page {
+        page-break-after: always;
+        width: var(--print-w);
+        height: var(--print-h);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 12mm;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+      }
+      .print-page:last-child { page-break-after: auto; }
+
+      .print-page .banner-bg {
+        position: absolute;
+        inset: 0;
+        background: #0D1117;
+        z-index: 0;
+      }
+      .print-page * { position: relative; z-index: 1; }
+
+      .print-page .brand {
+        font-family: 'Playfair Display', serif;
+        color: #C9A962;
+        font-size: 7mm;
+        margin-bottom: 2mm;
+        letter-spacing: 0.5px;
+      }
+      .print-page .tagline {
+        color: #8B949E;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 3.5mm;
+        margin-bottom: 6mm;
+      }
+      .print-page .qr-wrap {
+        background: #fff;
+        padding: 5mm;
+        border-radius: 3mm;
+        display: inline-block;
+        margin-bottom: 4mm;
+      }
+      .print-page .partner-company {
+        font-family: 'Playfair Display', serif;
+        color: #C9A962;
+        font-size: 7mm;
+        font-weight: 700;
+        margin-bottom: 1.5mm;
+        letter-spacing: 0.3px;
+      }
+      .print-page .partner-area {
+        font-family: 'DM Sans', sans-serif;
+        color: #8B949E;
+        font-size: 3mm;
+        margin-bottom: 4mm;
+      }
+      .print-page .scan-cta {
+        font-family: 'DM Sans', sans-serif;
+        color: #C9A962;
+        font-size: 3.5mm;
+        font-weight: 600;
+        margin-bottom: 1.5mm;
+      }
+      .print-page .url-label {
+        font-family: 'DM Sans', sans-serif;
+        color: #8B949E;
+        font-size: 2.5mm;
+      }
+    }
+
+    .print-pages { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h1>Print QR Banners</h1>
+  <label style="color:var(--text-muted);font-size:0.8rem">Filter:</label>
+  <select id="filterDate">
+    <option value="today">Today</option>
+    <option value="week">This week</option>
+    <option value="all" selected>All</option>
+  </select>
+  <label style="color:var(--text-muted);font-size:0.8rem">Size:</label>
+  <select id="bannerSize">
+    <option value="a4">A4 (210x297mm)</option>
+    <option value="a5">A5 (148x210mm)</option>
+    <option value="square">Square (150x150mm)</option>
+    <option value="custom">Custom...</option>
+  </select>
+  <input type="text" id="customSize" placeholder="WxH mm (e.g. 100x200)" style="display:none;width:130px">
+  <button class="btn btn-outline" onclick="selectAll()">Select All</button>
+  <button class="btn btn-gold" onclick="printSelected()">Print / Save PDF</button>
+</div>
+
+<div class="status-bar" id="statusBar">Loading partners...</div>
+
+<div class="loading" id="loadingState">Loading from Google Sheet...</div>
+
+<div class="preview-grid" id="previewGrid"></div>
+
+<div class="print-pages" id="printPages"></div>
+
+<a href="./index.html" style="display:block;text-align:center;margin-top:24px;color:var(--gold);font-size:0.85rem;text-decoration:none" class="no-print">Back to Partner Registration</a>
+
+<script>
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyH1KBC63S7yB3wSpHw-s5bZHH1Rwqta4Fsd6hIz8NCe0GqiaZZx13VdOsDALenWbqW/exec';
+var BASE_URL = 'https://uaepremiumnumbers.com/choose-number/?ref=';
+var allPartners = [];
+
+var SIZE_MAP = {
+  a4:     { w: '210mm', h: '297mm', qr: 200 },
+  a5:     { w: '148mm', h: '210mm', qr: 160 },
+  square: { w: '150mm', h: '150mm', qr: 140 }
+};
+
+/* ========================================
+   LOAD PARTNERS
+   ======================================== */
+function loadPartners() {
+  fetch(SCRIPT_URL + '?action=list')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.success || !data.partners) {
+        document.getElementById('loadingState').textContent = 'Failed to load partners';
+        return;
+      }
+      allPartners = data.partners.filter(function(p) {
+        return p.status === 'Active' && p.ref_code;
+      });
+      document.getElementById('loadingState').style.display = 'none';
+      applyFilter();
+    })
+    .catch(function(err) {
+      document.getElementById('loadingState').textContent = 'Error: ' + err.message;
+    });
+}
+
+/* ========================================
+   FILTER
+   ======================================== */
+function applyFilter() {
+  var filter = document.getElementById('filterDate').value;
+  var now = new Date();
+  var filtered = allPartners.filter(function(p) {
+    if (filter === 'all') return true;
+    var d = parseDate(p.date);
+    if (!d) return false;
+    if (filter === 'today') {
+      return d.toDateString() === now.toDateString();
+    }
+    if (filter === 'week') {
+      var weekAgo = new Date(now);
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return d >= weekAgo;
+    }
+    return true;
+  });
+  renderPreview(filtered);
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  var d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/* ========================================
+   RENDER PREVIEW CARDS
+   ======================================== */
+function renderPreview(partners) {
+  var grid = document.getElementById('previewGrid');
+  var status = document.getElementById('statusBar');
+  grid.innerHTML = '';
+
+  if (!partners.length) {
+    status.innerHTML = 'No partners found for this filter';
+    return;
+  }
+  status.innerHTML = '<span class="count">' + partners.length + '</span> partner' + (partners.length > 1 ? 's' : '') + ' — select which to print';
+
+  partners.forEach(function(p, idx) {
+    var card = document.createElement('div');
+    card.className = 'preview-card selected';
+    card.setAttribute('data-idx', idx);
+    card.setAttribute('data-ref', p.ref_code);
+
+    var qrId = 'prev-qr-' + idx;
+    card.innerHTML =
+      '<div class="p-company">' + escapeHtml(p.company_name || p.name) + '</div>' +
+      '<div class="p-owner">' + escapeHtml(p.owner_name || '') + '</div>' +
+      '<div class="p-area">' + escapeHtml(p.area || '') + (p.address ? ' — ' + escapeHtml(p.address) : '') + '</div>' +
+      '<div class="p-qr" id="' + qrId + '"></div>' +
+      '<div class="p-ref">' + escapeHtml(p.ref_code) + '</div>' +
+      '<div class="p-date">' + escapeHtml(p.date || '') + '</div>' +
+      '<input type="checkbox" class="p-check" checked>';
+
+    grid.appendChild(card);
+
+    new QRCode(document.getElementById(qrId), {
+      text: BASE_URL + encodeURIComponent(p.ref_code),
+      width: 120,
+      height: 120,
+      colorDark: '#0D1117',
+      colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+
+    card.querySelector('.p-check').addEventListener('change', function() {
+      card.classList.toggle('selected', this.checked);
+      updateCount();
+    });
+  });
+  updateCount();
+}
+
+function updateCount() {
+  var checked = document.querySelectorAll('.p-check:checked').length;
+  var total = document.querySelectorAll('.p-check').length;
+  var status = document.getElementById('statusBar');
+  status.innerHTML = '<span class="count">' + checked + '</span> of ' + total + ' selected for print';
+}
+
+function selectAll() {
+  var boxes = document.querySelectorAll('.p-check');
+  var allChecked = Array.prototype.every.call(boxes, function(b) { return b.checked; });
+  boxes.forEach(function(b) {
+    b.checked = !allChecked;
+    b.closest('.preview-card').classList.toggle('selected', b.checked);
+  });
+  updateCount();
+}
+
+/* ========================================
+   PRINT
+   ======================================== */
+function printSelected() {
+  var cards = document.querySelectorAll('.preview-card.selected');
+  if (!cards.length) { alert('Select at least one partner'); return; }
+
+  var sizeKey = document.getElementById('bannerSize').value;
+  var size;
+  if (sizeKey === 'custom') {
+    var raw = document.getElementById('customSize').value.trim();
+    var m = raw.match(/^(\d+)\s*[xX×]\s*(\d+)$/);
+    if (!m) { alert('Enter size as WxH in mm (e.g. 100x200)'); return; }
+    size = { w: m[1] + 'mm', h: m[2] + 'mm', qr: Math.min(parseInt(m[1]), parseInt(m[2])) - 40 };
+  } else {
+    size = SIZE_MAP[sizeKey];
+  }
+
+  var printContainer = document.getElementById('printPages');
+  printContainer.innerHTML = '';
+
+  // Set CSS vars for print size
+  document.documentElement.style.setProperty('--print-w', size.w);
+  document.documentElement.style.setProperty('--print-h', size.h);
+
+  var qrSize = Math.max(size.qr || 160, 80);
+
+  cards.forEach(function(card) {
+    var ref = card.getAttribute('data-ref');
+    var partner = allPartners.find(function(p) { return p.ref_code === ref; });
+    if (!partner) return;
+
+    var page = document.createElement('div');
+    page.className = 'print-page';
+
+    var qrId = 'print-qr-' + ref;
+    page.innerHTML =
+      '<div class="banner-bg"></div>' +
+      '<div class="brand">uaepremiumnumbers.com</div>' +
+      '<div class="tagline">Authorized Etisalat Sales Representative</div>' +
+      '<div class="qr-wrap" id="' + qrId + '"></div>' +
+      '<div class="partner-company">' + escapeHtml(partner.company_name || partner.name) + '</div>' +
+      (partner.area ? '<div class="partner-area">' + escapeHtml(partner.area) + '</div>' : '') +
+      '<div class="scan-cta">Scan to choose your VIP number</div>' +
+      '<div class="url-label">uaepremiumnumbers.com/choose-number</div>';
+
+    printContainer.appendChild(page);
+
+    new QRCode(document.getElementById(qrId), {
+      text: BASE_URL + encodeURIComponent(ref),
+      width: qrSize,
+      height: qrSize,
+      colorDark: '#0D1117',
+      colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  });
+
+  // Small delay for QR rendering, then print
+  setTimeout(function() { window.print(); }, 400);
+}
+
+/* ========================================
+   UTILS
+   ======================================== */
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str || ''));
+  return div.innerHTML;
+}
+
+/* ========================================
+   EVENT LISTENERS
+   ======================================== */
+document.getElementById('filterDate').addEventListener('change', applyFilter);
+
+document.getElementById('bannerSize').addEventListener('change', function() {
+  document.getElementById('customSize').style.display = this.value === 'custom' ? 'inline-block' : 'none';
+});
+
+/* ========================================
+   INIT
+   ======================================== */
+loadPartners();
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>B2C QR Standee | uaepremiumnumbers.com</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #e0ddd8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 32px;
+      max-width: 500px;
+      width: 100%;
+    }
+    .toolbar h2 {
+      color: #2c2417;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-right: auto;
+    }
+    .toolbar .btn {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-dark { background: #1a1410; color: #fff; }
+    .toolbar select {
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      width: 105mm;
+      height: 148mm;
+      background: #C41E2A;
+      border-radius: 5mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8mm 8mm 7mm;
+      text-align: center;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle corner accents */
+    .corner-tl, .corner-br {
+      position: absolute;
+      width: 18mm;
+      height: 18mm;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .corner-tl {
+      top: 4mm;
+      left: 4mm;
+      border-right: none;
+      border-bottom: none;
+      border-radius: 3mm 0 0 0;
+    }
+    .corner-br {
+      bottom: 4mm;
+      right: 4mm;
+      border-left: none;
+      border-top: none;
+      border-radius: 0 0 3mm 0;
+    }
+
+    .qr-frame {
+      background: #FFFFFF;
+      padding: 6mm;
+      border-radius: 3mm;
+      display: inline-block;
+      margin-bottom: 4mm;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-headline {
+      font-size: 26px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.3;
+      margin-bottom: 2mm;
+      position: relative;
+      z-index: 1;
+    }
+    .card-headline .gold {
+      color: #FFD700;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 4mm;
+      position: relative;
+      z-index: 1;
+    }
+
+    .divider {
+      width: 30px;
+      height: 2px;
+      background: #FFD700;
+      border-radius: 2px;
+      margin-bottom: 3mm;
+    }
+
+    .scan-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #FFD700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Size variants */
+    .card.size-small {
+      width: 90mm;
+      height: 130mm;
+      padding: 7mm 7mm 6mm;
+    }
+    .card.size-small .card-headline { font-size: 20px; }
+    .card.size-small .qr-frame { padding: 4mm; }
+    .card.size-small .scan-label { font-size: 9px; }
+
+    .card.size-large {
+      width: 148mm;
+      height: 210mm;
+      padding: 14mm 12mm 10mm;
+    }
+    .card.size-large .card-headline { font-size: 36px; margin-bottom: 4mm; }
+    .card.size-large .card-sub { font-size: 16px; margin-bottom: 6mm; }
+    .card.size-large .qr-frame { padding: 7mm; margin-bottom: 8mm; }
+    .card.size-large .scan-label { font-size: 13px; letter-spacing: 2px; }
+    .card.size-large .corner-tl,
+    .card.size-large .corner-br { width: 24mm; height: 24mm; }
+
+    @media print {
+      body { background: none; padding: 0; display: block; }
+      .toolbar { display: none !important; }
+      .card { box-shadow: none; margin: 0 auto; }
+      @page { margin: 10mm; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h2>B2C Standee Card</h2>
+  <select id="sizeSelect" onchange="switchSize(this.value)">
+    <option value="small">Small (90x130mm)</option>
+    <option value="medium" selected>Medium (105x148mm)</option>
+    <option value="large">Large / A5</option>
+  </select>
+  <button class="btn btn-dark" onclick="window.print()">Print / PDF</button>
+</div>
+
+<div class="card" id="card">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <h1 class="card-headline">
+    Choose <span class="gold">Golden</span><br>Numbers with<br>Postpaid Plans
+  </h1>
+
+  <p class="card-sub">Silver &bull; Gold &bull; Platinum</p>
+
+  <div class="qr-frame">
+    <div id="qrCode"></div>
+  </div>
+
+  <div class="scan-label">Scan to browse</div>
+</div>
+
+<script>
+var QR_SIZES = { small: 150, medium: 190, large: 260 };
+var currentSize = 'medium';
+
+function renderQR(size) {
+  var el = document.getElementById('qrCode');
+  el.innerHTML = '';
+  new QRCode(el, {
+    text: 'https://uaepremiumnumbers.com/choose-number/',
+    width: QR_SIZES[size],
+    height: QR_SIZES[size],
+    colorDark: '#1a1410',
+    colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+
+function switchSize(size) {
+  var card = document.getElementById('card');
+  card.className = 'card';
+  if (size === 'small') card.classList.add('size-small');
+  if (size === 'large') card.classList.add('size-large');
+  currentSize = size;
+  renderQR(size);
+}
+
+renderQR('medium');
+</script>
+</body>
+</html>

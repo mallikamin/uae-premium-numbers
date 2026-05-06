@@ -1,0 +1,36 @@
+# uaepremiumnumbers.com — Authorized Etisalat Dealer, UAE
+# https://uaepremiumnumbers.com/
+
+User-agent: *
+Allow: /
+Disallow: /generate_ads.py
+Disallow: /generate_assets.py
+
+# Sitemap
+Sitemap: https://uaepremiumnumbers.com/sitemap.xml
+
+# AI Crawlers — welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Bing IndexNow
+# Key: 8cd3e4326a8db7019ce980893f5d6ac4
+# Key file: /8cd3e4326a8db7019ce980893f5d6ac4.txt

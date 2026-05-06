@@ -1,0 +1,76 @@
+# Files in this list are NOT uploaded to Cloudflare when running `wrangler deploy`.
+# Syntax is gitignore-style. Cloudflare Workers Static Assets reads this from
+# the directory configured in wrangler.toml `[assets].directory`.
+
+# --- Version control (CRITICAL: never publish .git or anyone can clone the repo) ---
+.git/
+.gitignore
+.gitattributes
+
+# --- Editor / local dev config ---
+.claude/
+.cursor/
+.cursorrules
+.windsurfrules
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Wrangler / deploy config ---
+wrangler.toml
+.dev.vars
+.wrangler/
+.deploy_test
+
+# --- Worker source (compiled into the Worker itself, must not be served as a static file) ---
+worker.js
+worker.ts
+worker.mjs
+
+# --- Node / package manager ---
+node_modules/
+package.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# --- Secrets ---
+.env
+.env.*
+
+# --- Python build artifacts ---
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# --- Logs and databases ---
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Backend service that should not be served as static ---
+partner-tracking-api/__pycache__/
+partner-tracking-api/generated/
+partner-tracking-api/*.db
+partner-tracking-api/*.log
+partner-tracking-api/uvicorn.*.log
+
+# --- Internal docs (not for public consumption) ---
+ERROR_LOG.md
+DOCUMENTATION.md
+AI_SEO_EXECUTION_PLAN.md
+SEO_NEXT_STEPS.md
+DOMAIN_MIGRATION_*.md
+CHECKPOINT_*.md
+PAUSE_CHECKPOINT_*.md
+PROBIZ.docx
+
+# --- Build / generation scripts (not meant to be downloadable) ---
+generate_ads.py
+generate_assets.py
+
+# --- GitHub workflows (already public on GitHub if repo is public, but no need to serve) ---
+.github/

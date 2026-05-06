@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Print QR Banners | uaepremiumnumbers.com</title>
+  <link rel="icon" href="../favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --surface: #F8F8F8;
+      --border: #30363D;
+      --gold: #ED1C24;
+      --gold-light: #FF4444;
+      --text: #E6EDF3;
+      --text-muted: #8B949E;
+      --etisalat-red: #C8102E;
+      --banner-yellow: #FFD100;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 4px;
+      font-size: 1.4rem;
+    }
+    .hint {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+
+    /* ---------- Controls panel ---------- */
+    .controls {
+      max-width: 600px;
+      margin: 0 auto 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .control-row:last-child { margin-bottom: 0; }
+    .control-label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--gold);
+      min-width: 80px;
+    }
+    .toggle-group {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .toggle-group button {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toggle-group button.active {
+      background: var(--gold);
+      color: var(--bg);
+    }
+    .toggle-group button:not(.active):hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* ---------- Partner list ---------- */
+    .partner-list {
+      max-width: 600px;
+      margin: 0 auto 20px;
+    }
+    .partner-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .partner-list-header label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .partner-count {
+      font-size: 0.8rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .partner-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .partner-item:hover { border-color: var(--gold); }
+    .partner-item.selected { border-color: var(--gold); background: rgba(201,169,98,0.08); }
+    .partner-item input[type="checkbox"] {
+      accent-color: var(--gold);
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .partner-info { flex: 1; min-width: 0; }
+    .partner-company {
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .partner-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .partner-ref {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--gold);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 1px 8px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+
+    /* ---------- Action bar ---------- */
+    .action-bar {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--gold);
+      color: var(--bg);
+      margin: 4px;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-outline {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+    }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+
+    /* ---------- Loading / error ---------- */
+    .status-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .status-msg.error { color: #F85149; }
+
+    /* =============================================
+       BANNER CARDS — Etisalat Red Template
+       ============================================= */
+    .cards {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--etisalat-red);
+      border-radius: 12px;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* --- Portrait: 105 x 148 mm --- */
+    .card.portrait {
+      width: 315px; /* ~105mm at 3x */
+      height: 444px;
+      padding: 30px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* --- Landscape: 148 x 105 mm --- */
+    .card.landscape {
+      width: 444px;
+      height: 315px;
+      padding: 24px 30px;
+    }
+    .card.landscape .card-inner {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      gap: 24px;
+    }
+    .card.landscape .card-text {
+      flex: 1;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .card.landscape .card-qr-col {
+      flex-shrink: 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* --- Banner text elements --- */
+    .banner-headline {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .card.portrait .banner-headline { font-size: 1.55rem; }
+    .card.landscape .banner-headline { font-size: 1.45rem; }
+    .banner-headline .golden { color: var(--banner-yellow); }
+
+    .banner-tiers {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.25em;
+      font-size: 0.7rem;
+      margin-bottom: 16px;
+    }
+
+    .banner-qr {
+      background: #fff;
+      display: inline-block;
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+    }
+
+    .banner-company {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .banner-scan {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.3em;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+    }
+
+    .card-actions {
+      margin-top: 8px;
+    }
+
+    /* =============================================
+       PRINT STYLES
+       ============================================= */
+    @media print {
+      body { background: #fff !important; padding: 0 !important; }
+      .no-print { display: none !important; }
+      .cards { gap: 0; }
+
+      .card {
+        page-break-after: always;
+        border-radius: 0 !important;
+        background: #C8102E !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .card:last-child { page-break-after: auto; }
+
+      .card.portrait {
+        width: 105mm !important;
+        height: 148mm !important;
+        padding: 8mm 6mm !important;
+      }
+      .card.portrait .banner-headline { font-size: 7.5mm !important; }
+      .card.portrait .banner-tiers { font-size: 2.8mm !important; letter-spacing: 0.3em !important; margin-bottom: 5mm !important; }
+      .card.portrait .banner-qr { padding: 4mm !important; border-radius: 4mm !important; margin-bottom: 4mm !important; }
+      .card.portrait .banner-company { font-size: 5.5mm !important; margin-bottom: 2mm !important; }
+      .card.portrait .banner-scan { font-size: 2.5mm !important; letter-spacing: 0.35em !important; }
+
+      .card.landscape {
+        width: 148mm !important;
+        height: 105mm !important;
+        padding: 8mm !important;
+      }
+      .card.landscape .card-inner { gap: 6mm !important; }
+      .card.landscape .banner-headline { font-size: 7mm !important; }
+      .card.landscape .banner-tiers { font-size: 2.5mm !important; letter-spacing: 0.3em !important; margin-bottom: 4mm !important; }
+      .card.landscape .banner-qr { padding: 4mm !important; border-radius: 4mm !important; margin-bottom: 3mm !important; }
+      .card.landscape .banner-company { font-size: 5mm !important; margin-bottom: 1mm !important; }
+      .card.landscape .banner-scan { font-size: 2.2mm !important; letter-spacing: 0.35em !important; }
+
+      .banner-headline { color: #fff !important; }
+      .banner-headline .golden { color: #FFD100 !important; }
+      .banner-tiers { color: rgba(255,255,255,0.75) !important; }
+      .banner-company { color: #fff !important; }
+      .banner-scan { color: rgba(255,255,255,0.7) !important; }
+      .banner-qr { background: #fff !important; }
+      .card-actions { display: none !important; }
+    }
+    @media print { @page { margin: 0; } }
+  </style>
+</head>
+<body>
+
+<!-- ===== CONTROLS (no-print) ===== -->
+<div class="no-print">
+  <h1>Print QR Banners</h1>
+  <p class="hint">Select partners, choose layout, then print or save as PDF</p>
+
+  <div class="controls" id="controlsPanel">
+    <div class="control-row">
+      <span class="control-label">Layout</span>
+      <div class="toggle-group" id="layoutToggle">
+        <button class="active" data-layout="portrait" onclick="setLayout('portrait')">Portrait</button>
+        <button data-layout="landscape" onclick="setLayout('landscape')">Landscape</button>
+      </div>
+      <span style="font-size:0.75rem;color:var(--text-muted)" id="sizeHint">105 x 148 mm (A6)</span>
+    </div>
+  </div>
+
+  <!-- Partner list -->
+  <div class="partner-list" id="partnerListSection">
+    <div class="partner-list-header">
+      <label><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"> Select All</label>
+      <span class="partner-count" id="partnerCount"></span>
+    </div>
+    <div id="partnerList">
+      <div class="status-msg" id="loadingMsg">Loading partners...</div>
+    </div>
+  </div>
+
+  <div class="action-bar" id="mainActionBar">
+    <button class="btn" id="generateBtn" onclick="generateBanners()" disabled>Generate Banners</button>
+    <a href="./index.html" class="btn btn-outline" style="text-decoration:none;display:inline-block">Register New Partner</a>
+  </div>
+</div>
+
+<!-- ===== BANNER OUTPUT ===== -->
+<div class="cards" id="bannerOutput"></div>
+
+<div class="no-print action-bar" id="printBar" style="display:none">
+  <button class="btn" onclick="window.print()">Print / Save PDF</button>
+  <button class="btn btn-outline" onclick="backToSelect()">Back to Selection</button>
+</div>
+
+<script>
+/* ========================================
+   CONFIG
+   ======================================== */
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyH1KBC63S7yB3wSpHw-s5bZHH1Rwqta4Fsd6hIz8NCe0GqiaZZx13VdOsDALenWbqW/exec';
+var BASE_URL = 'https://uaepremiumnumbers.com/choose-number/?ref=';
+var currentLayout = 'portrait';
+var partners = [];
+var selected = {};
+
+/* ========================================
+   LAYOUT TOGGLE
+   ======================================== */
+function setLayout(layout) {
+  currentLayout = layout;
+  var btns = document.querySelectorAll('#layoutToggle button');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('active', btns[i].getAttribute('data-layout') === layout);
+  }
+  document.getElementById('sizeHint').textContent = layout === 'portrait' ? '105 x 148 mm (A6)' : '148 x 105 mm (A6 landscape)';
+
+  var ps = document.getElementById('pageSizeStyle');
+  if (!ps) { ps = document.createElement('style'); ps.id = 'pageSizeStyle'; document.head.appendChild(ps); }
+  ps.textContent = '@media print { @page { size: ' + (layout === 'portrait' ? '105mm 148mm' : '148mm 105mm') + '; margin: 0; } }';
+}
+
+/* ========================================
+   FETCH PARTNERS
+   ======================================== */
+function loadPartners() {
+  fetch(SCRIPT_URL + '?action=list')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.success || !data.partners) throw new Error('No data');
+      partners = data.partners.filter(function(p) { return p.status === 'Active'; });
+      renderPartnerList();
+      autoSelectFromUrl();
+    })
+    .catch(function(err) {
+      document.getElementById('loadingMsg').className = 'status-msg error';
+      document.getElementById('loadingMsg').textContent = 'Failed to load partners. Check your connection.';
+    });
+}
+
+function renderPartnerList() {
+  var container = document.getElementById('partnerList');
+  if (!partners.length) {
+    container.innerHTML = '<div class="status-msg">No active partners found. Register one first.</div>';
+    return;
+  }
+  document.getElementById('partnerCount').textContent = partners.length + ' partner' + (partners.length !== 1 ? 's' : '');
+
+  container.innerHTML = partners.map(function(p, i) {
+    var isSelected = selected[p.ref_code] ? ' selected' : '';
+    var checked = selected[p.ref_code] ? ' checked' : '';
+    return '<div class="partner-item' + isSelected + '" onclick="togglePartner(\'' + p.ref_code + '\',' + i + ')">'
+      + '<input type="checkbox"' + checked + ' onclick="event.stopPropagation()" onchange="togglePartner(\'' + p.ref_code + '\',' + i + ')">'
+      + '<div class="partner-info">'
+      + '<div class="partner-company">' + escapeHtml(p.company_name || p.name) + '</div>'
+      + '<div class="partner-meta">' + escapeHtml(p.owner_name || '') + (p.area ? ' &middot; ' + escapeHtml(p.area) : '') + '</div>'
+      + '</div>'
+      + '<span class="partner-ref">' + escapeHtml(p.ref_code) + '</span>'
+      + '</div>';
+  }).join('');
+
+  updateGenerateBtn();
+}
+
+function togglePartner(refCode, idx) {
+  if (selected[refCode]) {
+    delete selected[refCode];
+  } else {
+    selected[refCode] = partners[idx];
+  }
+  renderPartnerList();
+  updateSelectAll();
+}
+
+function toggleSelectAll() {
+  var cb = document.getElementById('selectAll');
+  selected = {};
+  if (cb.checked) {
+    for (var i = 0; i < partners.length; i++) {
+      selected[partners[i].ref_code] = partners[i];
+    }
+  }
+  renderPartnerList();
+}
+
+function updateSelectAll() {
+  var cb = document.getElementById('selectAll');
+  var count = Object.keys(selected).length;
+  cb.checked = count === partners.length && partners.length > 0;
+  cb.indeterminate = count > 0 && count < partners.length;
+}
+
+function updateGenerateBtn() {
+  var btn = document.getElementById('generateBtn');
+  var count = Object.keys(selected).length;
+  btn.disabled = count === 0;
+  btn.textContent = count === 0 ? 'Generate Banners' : 'Generate ' + count + ' Banner' + (count !== 1 ? 's' : '');
+}
+
+/* ========================================
+   AUTO-SELECT FROM URL
+   ======================================== */
+function autoSelectFromUrl() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var ref = params.get('ref');
+    if (!ref) return;
+    for (var i = 0; i < partners.length; i++) {
+      if (partners[i].ref_code === ref) {
+        selected[ref] = partners[i];
+        renderPartnerList();
+        return;
+      }
+    }
+  } catch (e) {}
+}
+
+/* ========================================
+   GENERATE BANNERS
+   ======================================== */
+function generateBanners() {
+  var output = document.getElementById('bannerOutput');
+  output.innerHTML = '';
+  var refs = Object.keys(selected);
+  if (!refs.length) return;
+
+  setLayout(currentLayout);
+
+  for (var i = 0; i < refs.length; i++) {
+    var p = selected[refs[i]];
+    var url = BASE_URL + encodeURIComponent(p.ref_code);
+    var qrId = 'qr-' + i;
+    var safeName = (p.company_name || p.name || '').replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '-');
+    var companyHtml = escapeHtml(p.company_name || p.name);
+
+    var headlineHtml = 'Choose <span class="golden">Golden</span><br>Numbers with<br>Postpaid Plans';
+    var tiersHtml = 'S i l v e r &nbsp;&bull;&nbsp; G o l d &nbsp;&bull;&nbsp; P l a t i n u m';
+
+    var cardHtml;
+    if (currentLayout === 'landscape') {
+      cardHtml = '<div class="card landscape">'
+        + '<div class="card-inner">'
+        + '<div class="card-text">'
+        + '<div class="banner-headline">' + headlineHtml + '</div>'
+        + '<div class="banner-tiers">' + tiersHtml + '</div>'
+        + '<div class="banner-scan">S C A N &nbsp; T O &nbsp; B R O W S E</div>'
+        + '</div>'
+        + '<div class="card-qr-col">'
+        + '<div class="banner-qr" id="' + qrId + '"></div>'
+        + '<div class="banner-company">' + companyHtml + '</div>'
+        + '</div>'
+        + '</div>'
+        + '<div class="card-actions no-print">'
+        + '<button class="btn btn-sm" onclick="downloadQR(\'' + qrId + '\',\'' + safeName + '\')">Download PNG</button>'
+        + '</div>'
+        + '</div>';
+    } else {
+      cardHtml = '<div class="card portrait">'
+        + '<div class="banner-headline">' + headlineHtml + '</div>'
+        + '<div class="banner-tiers">' + tiersHtml + '</div>'
+        + '<div class="banner-qr" id="' + qrId + '"></div>'
+        + '<div class="banner-company">' + companyHtml + '</div>'
+        + '<div class="banner-scan">S C A N &nbsp; T O &nbsp; B R O W S E</div>'
+        + '<div class="card-actions no-print">'
+        + '<button class="btn btn-sm" onclick="downloadQR(\'' + qrId + '\',\'' + safeName + '\')">Download PNG</button>'
+        + '</div>'
+        + '</div>';
+    }
+
+    output.insertAdjacentHTML('beforeend', cardHtml);
+
+    new QRCode(document.getElementById(qrId), {
+      text: url,
+      width: 220, height: 220,
+      colorDark: '#000000', colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  document.getElementById('printBar').style.display = 'block';
+  document.getElementById('partnerListSection').style.display = 'none';
+  document.getElementById('controlsPanel').style.display = 'none';
+  document.getElementById('mainActionBar').style.display = 'none';
+}
+
+function backToSelect() {
+  document.getElementById('bannerOutput').innerHTML = '';
+  document.getElementById('printBar').style.display = 'none';
+  document.getElementById('partnerListSection').style.display = 'block';
+  document.getElementById('controlsPanel').style.display = 'block';
+  document.getElementById('mainActionBar').style.display = 'block';
+}
+
+function downloadQR(qrId, name) {
+  var container = document.getElementById(qrId);
+  var img = container.querySelector('img') || container.querySelector('canvas');
+  if (!img) return;
+  var link = document.createElement('a');
+  link.download = 'qr-' + (name || 'partner') + '.png';
+  link.href = img.src || img.toDataURL('image/png');
+  link.click();
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str || ''));
+  return div.innerHTML;
+}
+
+/* ========================================
+   INIT
+   ======================================== */
+setLayout('portrait');
+loadPartners();
+</script>
+</body>
+</html>

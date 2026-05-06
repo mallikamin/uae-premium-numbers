@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Partner QR Standees | uaepremiumnumbers.com</title>
+  <link rel="icon" href="../favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --etisalat-red: #C8102E;
+      --etisalat-gold: #FFD200;
+      --bg: #FFFFFF;
+      --surface: #F8F8F8;
+      --border: #30363D;
+      --gold: #ED1C24;
+      --text: #E6EDF3;
+      --text-muted: #8B949E;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ===== SCREEN ===== */
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 24px;
+    }
+    .page-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .page-header h1 {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .standees {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .standee-block {
+      text-align: center;
+    }
+    .standee-label {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    .standee-label strong { color: var(--gold); }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 28px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-gold { background: var(--gold); color: var(--bg); }
+    .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+
+    /* ===== STANDEE COMMON ===== */
+    .standee {
+      background: var(--etisalat-red);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 14px;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    /* ===== LANDSCAPE — 148 x 105 mm (Al Garah) ===== */
+    .standee.landscape {
+      /* screen preview scaled: 148mm x 105mm ≈ 560px x 397px at 96dpi, scale down */
+      width: 520px;
+      height: 370px;
+      flex-direction: row;
+      padding: 24px 28px;
+      gap: 24px;
+    }
+    .landscape .standee-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: left;
+    }
+    .landscape .standee-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .landscape .standee-heading {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 1.45rem;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .landscape .standee-heading .gold { color: var(--etisalat-gold); }
+    .landscape .standee-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .landscape .standee-cta {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+    }
+    .landscape .standee-qr-wrap {
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .landscape .standee-company {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #fff;
+      text-align: center;
+      max-width: 200px;
+      word-wrap: break-word;
+    }
+
+    /* ===== PORTRAIT — 105 x 148 mm (Alqasar) ===== */
+    .standee.portrait {
+      width: 370px;
+      height: 520px;
+      padding: 28px 24px;
+    }
+    .portrait .standee-heading {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 1.55rem;
+      color: #fff;
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .portrait .standee-heading .gold { color: var(--etisalat-gold); }
+    .portrait .standee-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .portrait .standee-qr-wrap {
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 22px;
+    }
+    .portrait .standee-company {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 8px;
+      max-width: 260px;
+      word-wrap: break-word;
+    }
+    .portrait .standee-cta {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      text-align: center;
+    }
+
+    /* ===== PRINT — PAGE 1: landscape 148x105, PAGE 2: portrait 105x148 ===== */
+    @media print {
+      body { background: #fff; padding: 0; margin: 0; }
+      .page-header, .btn-row, .standee-label { display: none !important; }
+      .standees { display: block; gap: 0; }
+      .standee-block { margin: 0; }
+      .standee {
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0 auto;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .standee-block { page-break-after: always; }
+      .standee-block:last-child { page-break-after: auto; }
+
+      /* Page 1: landscape 148 x 105 mm */
+      .standee-block.block-landscape { page-break-after: always; }
+      .standee-block.block-landscape .standee {
+        width: 148mm;
+        height: 105mm;
+        padding: 8mm 10mm;
+        gap: 8mm;
+      }
+      .standee-block.block-landscape .standee-heading { font-size: 5.5mm; }
+      .standee-block.block-landscape .standee-subtitle { font-size: 2.8mm; margin-bottom: 4mm; }
+      .standee-block.block-landscape .standee-qr-wrap { padding: 3mm; border-radius: 3mm; margin-bottom: 3mm; }
+      .standee-block.block-landscape .standee-company { font-size: 3.2mm; }
+      .standee-block.block-landscape .standee-cta { font-size: 2.5mm; }
+
+      /* Page 2: portrait 105 x 148 mm */
+      .standee-block.block-portrait .standee {
+        width: 105mm;
+        height: 148mm;
+        padding: 10mm 8mm;
+      }
+      .standee-block.block-portrait .standee-heading { font-size: 6mm; }
+      .standee-block.block-portrait .standee-subtitle { font-size: 3mm; margin-bottom: 5mm; }
+      .standee-block.block-portrait .standee-qr-wrap { padding: 4mm; border-radius: 3mm; margin-bottom: 5mm; }
+      .standee-block.block-portrait .standee-company { font-size: 3.5mm; margin-bottom: 2mm; }
+      .standee-block.block-portrait .standee-cta { font-size: 2.5mm; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Partner QR Standees</h1>
+  <p>Print-ready standees based on the B2C QR template</p>
+</div>
+
+<div class="standees">
+
+  <!-- ===== AL GARAH — LANDSCAPE 148 x 105 mm ===== -->
+  <div class="standee-block block-landscape">
+    <div class="standee-label"><strong>Al Garah Mobile Shop</strong> &mdash; 148 &times; 105 mm (landscape)</div>
+    <div class="standee landscape">
+      <div class="standee-left">
+        <div class="standee-heading">
+          Choose <span class="gold">Golden</span><br>
+          Numbers with<br>
+          Postpaid Plans
+        </div>
+        <div class="standee-subtitle">Silver &bull; Gold &bull; Platinum</div>
+        <div class="standee-cta">Scan to Browse</div>
+      </div>
+      <div class="standee-right">
+        <div class="standee-qr-wrap">
+          <div id="qr1"></div>
+        </div>
+        <div class="standee-company">Al Garah Mobile Shop</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ALQASAR ALHANDASI — PORTRAIT 105 x 148 mm ===== -->
+  <div class="standee-block block-portrait">
+    <div class="standee-label"><strong>Alqasar Alhandasi</strong> &mdash; 105 &times; 148 mm (portrait)</div>
+    <div class="standee portrait">
+      <div class="standee-heading">
+        Choose <span class="gold">Golden</span><br>
+        Numbers with<br>
+        Postpaid Plans
+      </div>
+      <div class="standee-subtitle">Silver &bull; Gold &bull; Platinum</div>
+      <div class="standee-qr-wrap">
+        <div id="qr2"></div>
+      </div>
+      <div class="standee-company">Alqasar Alhandasi</div>
+      <div class="standee-cta">Scan to Browse</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="btn-row">
+  <button class="btn btn-gold" onclick="window.print()">Print / Save PDF</button>
+  <a href="./index.html" class="btn btn-outline">Back to Registration</a>
+</div>
+
+<script>
+var BASE_URL = 'https://uaepremiumnumbers.com/choose-number/?ref=';
+
+new QRCode(document.getElementById('qr1'), {
+  text: BASE_URL + 'ggu8ey5h',
+  width: 180,
+  height: 180,
+  colorDark: '#000000',
+  colorLight: '#FFFFFF',
+  correctLevel: QRCode.CorrectLevel.M
+});
+
+new QRCode(document.getElementById('qr2'), {
+  text: BASE_URL + 'fjxkwhy9',
+  width: 200,
+  height: 200,
+  colorDark: '#000000',
+  colorLight: '#FFFFFF',
+  correctLevel: QRCode.CorrectLevel.M
+});
+</script>
+</body>
+</html>

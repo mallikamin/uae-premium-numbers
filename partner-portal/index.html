@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Partner Onboarding | uaepremiumnumbers.com</title>
+  <link rel="icon" href="../favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --surface: #F8F8F8;
+      --border: #30363D;
+      --gold: #ED1C24;
+      --gold-light: #FF4444;
+      --text: #E6EDF3;
+      --text-muted: #8B949E;
+      --green: #3FB950;
+      --red: #F85149;
+      --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--gold);
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus { border-color: var(--gold); }
+    input::placeholder { color: var(--text-muted); opacity: 0.5; }
+    select { cursor: pointer; }
+    select option { background: var(--bg); color: var(--text); }
+    .field { margin-bottom: 16px; }
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-gold { background: var(--gold); color: var(--bg); }
+    .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+    .btn-submit {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px;
+      font-size: 1rem;
+    }
+    .alert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .alert.visible { display: block; }
+    .alert-error { background: rgba(248,81,73,0.1); border: 1px solid var(--red); color: var(--red); }
+    .alert-success { background: rgba(63,185,80,0.1); border: 1px solid var(--green); color: var(--green); }
+
+    /* QR output */
+    .qr-output {
+      display: none;
+      margin-top: 24px;
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .qr-output.visible { display: block; }
+    .qr-success-label {
+      color: var(--green);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .qr-company-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--gold);
+      margin-bottom: 2px;
+      font-weight: 700;
+    }
+    .qr-ref-badge {
+      display: inline-block;
+      font-family: monospace;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .qr-canvas-wrap {
+      background: #fff;
+      border-radius: var(--radius);
+      display: inline-block;
+      padding: 16px;
+      margin-bottom: 8px;
+    }
+    .qr-url {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      word-break: break-all;
+      margin-bottom: 12px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* History */
+    .history {
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+    .history h3 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .history-list { list-style: none; }
+    .history-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .history-list li:last-child { border-bottom: none; }
+    .history-name { color: var(--text); }
+    .history-meta {
+      text-align: right;
+    }
+    .history-code {
+      font-family: monospace;
+      color: var(--gold);
+      font-size: 0.8rem;
+      display: block;
+    }
+    .history-location {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .geo-row {
+      display: flex;
+      gap: 8px;
+    }
+    .geo-row input { flex: 1; cursor: default; }
+    .btn-geo { padding: 10px 14px; font-size: 0.85rem; }
+    .geo-status {
+      font-size: 0.75rem;
+      margin-top: 4px;
+      min-height: 1em;
+    }
+    .geo-status.fetching { color: var(--gold); }
+    .geo-status.success { color: var(--green); }
+    .geo-status.error { color: var(--red); }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--bg);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 500px) {
+      .card { padding: 20px; }
+      h1 { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Partner Onboarding</h1>
+  <p class="subtitle">Register a partner and generate their referral QR code</p>
+
+  <div class="alert alert-error" id="alertError"></div>
+  <div class="alert alert-success" id="alertSuccess"></div>
+
+  <form id="partnerForm" onsubmit="return handleSubmit(event)">
+    <div class="field">
+      <label for="ownerName">Owner Name *</label>
+      <input type="text" id="ownerName" placeholder="e.g. Ali Ahmed" required>
+    </div>
+
+    <div class="field">
+      <label for="companyName">Company / Shop Name *</label>
+      <input type="text" id="companyName" placeholder="e.g. Ali's Mobile Shop" required>
+    </div>
+
+    <div class="field">
+      <label for="partnerMobile">Mobile Number *</label>
+      <input type="tel" id="partnerMobile" placeholder="e.g. 971501234567" required>
+    </div>
+
+    <div class="field">
+      <label for="partnerAddress">Shop / Office Address</label>
+      <input type="text" id="partnerAddress" placeholder="e.g. Shop 12, Al Fahidi Bldg, Deira">
+    </div>
+
+    <div class="field">
+      <label for="partnerLocation">Area</label>
+      <select id="partnerLocation">
+        <option value="">Select area...</option>
+        <option value="Dubai - Deira">Dubai - Deira</option>
+        <option value="Dubai - Bur Dubai">Dubai - Bur Dubai</option>
+        <option value="Dubai - Marina">Dubai - Marina</option>
+        <option value="Dubai - JBR">Dubai - JBR</option>
+        <option value="Dubai - Downtown">Dubai - Downtown</option>
+        <option value="Dubai - Hor Al Anz">Dubai - Hor Al Anz</option>
+        <option value="Dubai - Business Bay">Dubai - Business Bay</option>
+        <option value="Dubai - Al Barsha">Dubai - Al Barsha</option>
+        <option value="Dubai - Karama">Dubai - Karama</option>
+        <option value="Dubai - International City">Dubai - International City</option>
+        <option value="Dubai - Silicon Oasis">Dubai - Silicon Oasis</option>
+        <option value="Dubai - JLT">Dubai - JLT</option>
+        <option value="Dubai - Other">Dubai - Other</option>
+        <option value="Abu Dhabi">Abu Dhabi</option>
+        <option value="Sharjah">Sharjah</option>
+        <option value="Ajman">Ajman</option>
+        <option value="RAK">RAK</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>GPS Coordinates</label>
+      <div class="geo-row">
+        <input type="text" id="partnerGeo" placeholder="Tap to fetch location" readonly>
+        <button type="button" class="btn btn-outline btn-geo" id="geoBtn" onclick="fetchLocation()">Locate</button>
+      </div>
+      <div class="geo-status" id="geoStatus"></div>
+    </div>
+
+    <button type="submit" class="btn btn-gold btn-submit" id="submitBtn">Register & Generate QR</button>
+  </form>
+
+  <div class="qr-output" id="qrOutput">
+    <div class="qr-success-label">Partner registered successfully</div>
+    <div class="qr-canvas-wrap">
+      <div id="qrCanvas"></div>
+    </div>
+    <div class="qr-company-name" id="qrCompanyLabel"></div>
+    <div class="qr-ref-badge" id="qrRefBadge"></div>
+    <div class="qr-url" id="qrUrlLabel"></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="downloadQR()">Download PNG</button>
+      <button class="btn btn-outline" onclick="copyLink()">Copy Link</button>
+      <button class="btn btn-outline" id="printBannerBtn" onclick="printBanner()">Print Banner</button>
+      <button class="btn btn-outline" onclick="resetForm()">New Partner</button>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;text-align:center">
+    <a href="./print-batch.html" class="btn btn-outline" style="text-decoration:none;display:inline-block">Print QR Banners (All Partners)</a>
+  </div>
+
+  <div class="history" id="historySection" style="display:none">
+    <h3>Recently Registered</h3>
+    <ul class="history-list" id="historyList"></ul>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+/* ========================================
+   CONFIG — Update SCRIPT_URL after deploying Apps Script
+   ======================================== */
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyH1KBC63S7yB3wSpHw-s5bZHH1Rwqta4Fsd6hIz8NCe0GqiaZZx13VdOsDALenWbqW/exec';
+var BASE_URL = 'https://uaepremiumnumbers.com/choose-number/?ref=';
+var HISTORY_KEY = 'es_partner_codes';
+
+/* ========================================
+   GEOLOCATION
+   ======================================== */
+function fetchLocation() {
+  var geoInput = document.getElementById('partnerGeo');
+  var geoStatus = document.getElementById('geoStatus');
+  var geoBtn = document.getElementById('geoBtn');
+
+  if (!navigator.geolocation) {
+    geoStatus.textContent = 'Geolocation not supported in this browser';
+    geoStatus.className = 'geo-status error';
+    return;
+  }
+
+  geoBtn.disabled = true;
+  geoBtn.textContent = '...';
+  geoStatus.textContent = 'Fetching location...';
+  geoStatus.className = 'geo-status fetching';
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      var lat = pos.coords.latitude.toFixed(6);
+      var lng = pos.coords.longitude.toFixed(6);
+      geoInput.value = lat + ', ' + lng;
+      geoStatus.textContent = 'Location captured (accuracy: ' + Math.round(pos.coords.accuracy) + 'm)';
+      geoStatus.className = 'geo-status success';
+      geoBtn.disabled = false;
+      geoBtn.textContent = 'Locate';
+    },
+    function(err) {
+      var msg = 'Location access denied';
+      if (err.code === 2) msg = 'Location unavailable';
+      if (err.code === 3) msg = 'Location request timed out';
+      geoStatus.textContent = msg;
+      geoStatus.className = 'geo-status error';
+      geoBtn.disabled = false;
+      geoBtn.textContent = 'Locate';
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+/* ========================================
+   FORM SUBMIT
+   ======================================== */
+function handleSubmit(e) {
+  e.preventDefault();
+  hideAlerts();
+
+  var ownerName = document.getElementById('ownerName').value.trim();
+  var companyName = document.getElementById('companyName').value.trim();
+  var mobile = document.getElementById('partnerMobile').value.trim().replace(/\s+/g, '');
+  var address = document.getElementById('partnerAddress').value.trim();
+  var location = document.getElementById('partnerLocation').value;
+  var geo = document.getElementById('partnerGeo').value.trim();
+
+  if (!ownerName) { showError('Enter owner name'); return false; }
+  if (!companyName) { showError('Enter company / shop name'); return false; }
+  if (!mobile || mobile.length < 9) { showError('Enter a valid mobile number'); return false; }
+
+  var refCode = generateRefCode();
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Registering...';
+
+  if (!SCRIPT_URL) {
+    onRegistrationSuccess(ownerName, companyName, mobile, address, location, geo, refCode);
+    return false;
+  }
+
+  var payload = {
+    owner_name: ownerName,
+    company_name: companyName,
+    mobile: mobile,
+    address: address,
+    location: location,
+    geo: geo,
+    ref_code: refCode
+  };
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.success) {
+      onRegistrationSuccess(ownerName, companyName, mobile, address, location, geo, data.ref_code || refCode);
+    } else {
+      showError(data.error || 'Registration failed');
+      resetButton();
+    }
+  })
+  .catch(function(err) {
+    showError('Network error — check your connection');
+    resetButton();
+  });
+
+  return false;
+}
+
+function onRegistrationSuccess(ownerName, companyName, mobile, address, location, geo, refCode) {
+  var url = BASE_URL + encodeURIComponent(refCode);
+
+  // Generate QR
+  var container = document.getElementById('qrCanvas');
+  container.innerHTML = '';
+  new QRCode(container, {
+    text: url,
+    width: 280,
+    height: 280,
+    colorDark: '#0D1117',
+    colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  document.getElementById('qrCompanyLabel').textContent = companyName;
+  document.getElementById('qrRefBadge').textContent = refCode;
+  document.getElementById('qrUrlLabel').textContent = url;
+  document.getElementById('qrOutput').classList.add('visible');
+  document.getElementById('partnerForm').style.display = 'none';
+
+  saveToHistory(ownerName, companyName, refCode, location);
+}
+
+/* ========================================
+   REF CODE GENERATOR
+   ======================================== */
+function generateRefCode() {
+  var chars = 'abcdefghijkmnpqrstuvwxyz23456789';
+  var code = '';
+  for (var i = 0; i < 8; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+/* ========================================
+   QR ACTIONS
+   ======================================== */
+function downloadQR() {
+  var container = document.getElementById('qrCanvas');
+  var refCode = document.getElementById('qrRefBadge').textContent;
+  var name = document.getElementById('qrPartnerLabel').textContent.replace(/\s+/g, '-');
+
+  var img = container.querySelector('img') || container.querySelector('canvas');
+  if (!img) { alert('Generate a QR first'); return; }
+
+  var link = document.createElement('a');
+  link.download = 'qr-' + (name || refCode) + '.png';
+  link.href = img.src || img.toDataURL('image/png');
+  link.click();
+}
+
+function copyLink() {
+  var refCode = document.getElementById('qrRefBadge').textContent;
+  var url = BASE_URL + encodeURIComponent(refCode);
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function() {
+      showCopyFeedback();
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showCopyFeedback();
+  }
+}
+
+function showCopyFeedback() {
+  var btns = document.querySelectorAll('.btn-row .btn-outline');
+  var btn = btns[0];
+  if (!btn) return;
+  var orig = btn.textContent;
+  btn.textContent = 'Copied!';
+  setTimeout(function() { btn.textContent = orig; }, 1500);
+}
+
+/* ========================================
+   FORM RESET
+   ======================================== */
+function resetForm() {
+  document.getElementById('partnerForm').style.display = 'block';
+  document.getElementById('partnerForm').reset();
+  document.getElementById('qrOutput').classList.remove('visible');
+  document.getElementById('qrCanvas').innerHTML = '';
+  resetButton();
+  hideAlerts();
+}
+
+function resetButton() {
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = false;
+  btn.innerHTML = 'Register &amp; Generate QR';
+}
+
+/* ========================================
+   ALERTS
+   ======================================== */
+function showError(msg) {
+  var el = document.getElementById('alertError');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function showSuccess(msg) {
+  var el = document.getElementById('alertSuccess');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function hideAlerts() {
+  document.getElementById('alertError').classList.remove('visible');
+  document.getElementById('alertSuccess').classList.remove('visible');
+}
+
+/* ========================================
+   HISTORY (localStorage)
+   ======================================== */
+function saveToHistory(ownerName, companyName, code, location) {
+  try {
+    var history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    history = history.filter(function(h) { return h.code !== code; });
+    history.unshift({ name: ownerName, company: companyName, code: code, location: location || '', ts: Date.now() });
+    if (history.length > 30) history = history.slice(0, 30);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderHistory();
+  } catch (e) {}
+}
+
+function renderHistory() {
+  try {
+    var history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    var section = document.getElementById('historySection');
+    var list = document.getElementById('historyList');
+    if (!history.length) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    list.innerHTML = history.map(function(h) {
+      return '<li>'
+        + '<span class="history-name">' + escapeHtml(h.company || h.name) + '<br><span style="font-size:0.75rem;color:var(--text-muted)">' + escapeHtml(h.name) + '</span></span>'
+        + '<span class="history-meta">'
+        + '<span class="history-code">' + escapeHtml(h.code) + '</span>'
+        + (h.location ? '<span class="history-location">' + escapeHtml(h.location) + '</span>' : '')
+        + '</span>'
+        + '</li>';
+    }).join('');
+  } catch (e) {}
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+/* ========================================
+   PRINT BANNER — opens print-batch with this partner pre-selected
+   ======================================== */
+function printBanner() {
+  var refCode = document.getElementById('qrRefBadge').textContent;
+  if (refCode) {
+    window.open('./print-batch.html?ref=' + encodeURIComponent(refCode), '_blank');
+  }
+}
+
+/* ========================================
+   INIT
+   ======================================== */
+renderHistory();
+</script>
+</body>
+</html>

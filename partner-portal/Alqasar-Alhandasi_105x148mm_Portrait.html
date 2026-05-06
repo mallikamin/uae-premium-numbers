@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alqasar Alhandasi — 105x148mm Portrait</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: 105mm 148mm; margin: 0; }
+    html, body {
+      width: 105mm;
+      height: 148mm;
+      overflow: hidden;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #C8102E;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .standee {
+      width: 105mm;
+      height: 148mm;
+      background: #C8102E;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10mm 8mm;
+    }
+    .heading {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 6.5mm;
+      color: #fff;
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 1.5mm;
+    }
+    .heading .gold { color: #FFD200; }
+    .subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 3mm;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.8mm;
+      margin-bottom: 6mm;
+      text-align: center;
+    }
+    .qr-wrap {
+      background: #fff;
+      border-radius: 4mm;
+      padding: 4mm;
+      margin-bottom: 6mm;
+      line-height: 0;
+    }
+    .company {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 6mm;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 3mm;
+      max-width: 80mm;
+      word-wrap: break-word;
+    }
+    .cta {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 2.6mm;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 1.5mm;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="standee">
+  <div class="heading">
+    Choose <span class="gold">Golden</span><br>
+    Numbers with<br>
+    Postpaid Plans
+  </div>
+  <div class="subtitle">Silver &bull; Gold &bull; Platinum</div>
+  <div class="qr-wrap"><div id="qr"></div></div>
+  <div class="company">Alqasar Alhandasi</div>
+  <div class="cta">Scan to Browse</div>
+</div>
+<script>
+new QRCode(document.getElementById('qr'), {
+  text: 'https://uaepremiumnumbers.com/choose-number/?ref=fjxkwhy9',
+  width: 512, height: 512,
+  colorDark: '#000000', colorLight: '#FFFFFF',
+  correctLevel: QRCode.CorrectLevel.M
+});
+// Force img sizing for print
+setTimeout(function() {
+  var img = document.querySelector('#qr img');
+  if (img) { img.style.width = '42mm'; img.style.height = '42mm'; }
+  var canvas = document.querySelector('#qr canvas');
+  if (canvas) { canvas.style.width = '42mm'; canvas.style.height = '42mm'; }
+}, 100);
+</script>
+</body>
+</html>

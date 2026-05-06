@@ -1,0 +1,14 @@
+name = "uae-premium-numbers"
+main = "worker.js"
+compatibility_date = "2024-12-18"
+
+# Serve everything except /api/* as static assets from the repo root.
+# Worker handles /api/tiktok-event; all other paths fall through to ASSETS.
+[assets]
+directory = "./"
+binding = "ASSETS"
+not_found_handling = "404-page"
+
+# TIKTOK_EVENTS_API_TOKEN and TIKTOK_PIXEL_ID are configured in the
+# Cloudflare dashboard under Settings -> Variables and Secrets, NOT here
+# (never commit secrets).

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Google Review Card | uaepremiumnumbers.com</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #e0ddd8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 32px;
+      max-width: 500px;
+      width: 100%;
+    }
+    .toolbar h2 {
+      color: #2c2417;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-right: auto;
+    }
+    .toolbar .btn {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-dark { background: #1a1410; color: #fff; }
+    .toolbar select {
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+    }
+    .toolbar input {
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: #1a1410;
+      width: 100%;
+      max-width: 360px;
+    }
+    .toolbar label { font-size: 0.8rem; color: #666; }
+
+    /* ===== CARD ===== */
+    .card {
+      width: 105mm;
+      height: 148mm;
+      background: #FFFFFF;
+      border-radius: 5mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10mm 8mm;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    /* Stars */
+    .stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 4mm;
+    }
+    .star {
+      width: 20px;
+      height: 20px;
+    }
+
+    .card-headline {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1410;
+      line-height: 1.3;
+      margin-bottom: 1.5mm;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 6mm;
+      line-height: 1.4;
+    }
+
+    .qr-wrap { margin-bottom: 4mm; }
+
+    .card-url {
+      font-size: 9px;
+      color: #aaa;
+      word-break: break-all;
+      margin-bottom: 4mm;
+      padding: 0 2mm;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      font-size: 9px;
+      color: #bbb;
+      letter-spacing: 0.3px;
+    }
+
+    /* Size variants */
+    .card.size-small {
+      width: 90mm;
+      height: 130mm;
+      padding: 8mm 7mm;
+    }
+    .card.size-small .star { width: 16px; height: 16px; }
+    .card.size-small .card-headline { font-size: 18px; }
+    .card.size-small .card-sub { font-size: 10px; }
+
+    .card.size-large {
+      width: 148mm;
+      height: 210mm;
+      padding: 16mm 14mm;
+    }
+    .card.size-large .star { width: 26px; height: 26px; }
+    .card.size-large .card-headline { font-size: 30px; margin-bottom: 3mm; }
+    .card.size-large .card-sub { font-size: 14px; margin-bottom: 10mm; }
+    .card.size-large .card-url { font-size: 11px; }
+    .card.size-large .card-footer { font-size: 11px; }
+
+    @media print {
+      body { background: none; padding: 0; display: block; }
+      .toolbar { display: none !important; }
+      .card { box-shadow: none; margin: 0 auto; border: 0.5px solid #eee; }
+      @page { margin: 10mm; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h2>Google Review Card</h2>
+  <select id="sizeSelect" onchange="switchSize(this.value)">
+    <option value="small">Small (90x130mm)</option>
+    <option value="medium" selected>Medium (105x148mm)</option>
+    <option value="large">Large / A5</option>
+  </select>
+  <button class="btn btn-dark" onclick="window.print()">Print / PDF</button>
+</div>
+<div class="toolbar" style="margin-top:-16px">
+  <label>Google Review URL:</label>
+  <input type="text" id="reviewUrl" value="https://g.page/r/CW4kdlymGKSiEAE/review" placeholder="Paste your Google review link" oninput="regenerateQR()">
+</div>
+
+<div class="card" id="card">
+
+  <div class="stars">
+    <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#FBBC04"/></svg>
+    <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#FBBC04"/></svg>
+    <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#FBBC04"/></svg>
+    <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#FBBC04"/></svg>
+    <svg class="star" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#FBBC04"/></svg>
+  </div>
+
+  <h1 class="card-headline">
+    Loved our service?<br>Leave us a review!
+  </h1>
+  <p class="card-sub">Your feedback helps us serve you better.<br>Scan below to rate us on Google.</p>
+
+  <div class="qr-wrap" id="qrCode"></div>
+
+  <div class="card-url" id="urlLabel">Scan to review on Google</div>
+
+  <div class="card-footer">Thank you for your feedback!</div>
+</div>
+
+<script>
+var QR_SIZES = { small: 140, medium: 170, large: 220 };
+var currentSize = 'medium';
+
+function renderQR(size) {
+  var el = document.getElementById('qrCode');
+  var url = document.getElementById('reviewUrl').value.trim() || 'https://g.page/r/CW4kdlymGKSiEAE/review';
+  el.innerHTML = '';
+  new QRCode(el, {
+    text: url,
+    width: QR_SIZES[size],
+    height: QR_SIZES[size],
+    colorDark: '#1a1410',
+    colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+  // Update visible URL label (short form)
+  try {
+    var short = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    document.getElementById('urlLabel').textContent = short;
+  } catch(e) {}
+}
+
+function switchSize(size) {
+  var card = document.getElementById('card');
+  card.className = 'card';
+  if (size === 'small') card.classList.add('size-small');
+  if (size === 'large') card.classList.add('size-large');
+  currentSize = size;
+  renderQR(size);
+}
+
+var debounceTimer;
+function regenerateQR() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(function() { renderQR(currentSize); }, 300);
+}
+
+renderQR('medium');
+</script>
+</body>
+</html>

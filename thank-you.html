@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) — GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=__GA4_PLACEHOLDER__"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '__GA4_PLACEHOLDER__');
+    var _eid = Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    gtag('event', 'generate_lead', { lead_source: 'form', interest_type: 'inquiry_form', value: 500, currency: 'AED', event_id: _eid });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You | uaepremiumnumbers.com</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Facebook Pixel — Replace __META_PIXEL_PLACEHOLDER__ with your actual Pixel ID from Meta Business Manager -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '__META_PIXEL_PLACEHOLDER__');
+    fbq('track', 'PageView');
+    fbq('track', 'Lead', {}, {eventID: _eid});
+        if (typeof ttq !== 'undefined') ttq.track('SubmitForm', {});
+  </script>
+  <!-- TikTok Pixel Code Start -->
+  <script>
+  !function (w, d, t) {
+    w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+  var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+  ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+    ttq.load('D7J1GQRC77UDQGOITA8G');
+    ttq.page();
+  }(window, document, 'ttq');
+  </script>
+  <!-- TikTok Pixel Code End -->
+
+  <!-- TikTok Funnel Events (ViewContent + ClickButton) -->
+  <script>
+  (function(){
+    if (typeof ttq === 'undefined') return;
+    var p = window.location.pathname;
+    function getCat() {
+      if (p === '/' || p === '/index.html' || p.endsWith('/index.html') && p.split('/').length === 2) return 'Homepage';
+      if (p.indexOf('/ar/blog') > -1) return 'Blog AR';
+      if (p.indexOf('/ar/') === 0 || p === '/ar' || p === '/ar/') return 'Homepage AR';
+      if (p.indexOf('choose-number') > -1) return 'Number Browsing';
+      if (p.indexOf('emirati') > -1) return 'Emirati Plan';
+      if (p.indexOf('dubai') > -1) return 'Dubai Plans';
+      if (p.indexOf('abu-dhabi') > -1) return 'Abu Dhabi Plans';
+      if (p.indexOf('sharjah') > -1) return 'Sharjah Plans';
+      if (p.indexOf('/blog') > -1) return 'Blog';
+      if (p.indexOf('thank-you') > -1) return 'Thank You';
+      if (p.indexOf('privacy') > -1) return 'Privacy';
+      if (p.indexOf('404') > -1) return '404';
+      return 'Other';
+    }
+    var cat = getCat();
+    var title = (document.title || 'Golden Numbers').substring(0, 100);
+    try {
+      ttq.track('ViewContent', {
+        content_name: title,
+        content_category: cat,
+        content_type: 'product_group',
+        content_id: p
+      });
+    } catch(e){}
+    document.addEventListener('click', function(e){
+      try {
+        var el = e.target.closest('.nav-cta, .btn-primary, .hero-cta, .btn-outline, [data-tt-cta]');
+        if (!el) return;
+        if (el.classList.contains('btn-wa')) return;
+        var label = (el.textContent || '').trim().substring(0, 80);
+        var href = el.getAttribute('href') || '';
+        ttq.track('ClickButton', {
+          content_name: label,
+          content_category: cat,
+          content_id: href
+        });
+      } catch(err){}
+    }, true);
+  })();
+  </script>
+  <!-- End TikTok Funnel Events -->
+
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=__META_PIXEL_PLACEHOLDER__&ev=PageView&noscript=1"/></noscript>
+  <!-- End Facebook Pixel -->
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #FFFFFF;
+      --surface: #F8F8F8;
+      --surface-border: #E5E5E5;
+      --gold: #ED1C24;
+      --gold-light: #FF4444;
+      --text: #1A1A1A;
+      --text-muted: rgba(26, 26, 26, 0.65);
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      text-align: center;
+      max-width: 560px;
+    }
+    .checkmark {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      animation: scaleIn 0.5s ease;
+    }
+    .checkmark svg {
+      width: 40px;
+      height: 40px;
+      stroke: var(--bg);
+      stroke-width: 3;
+      fill: none;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .highlight {
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .cta-row {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.8rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--bg);
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,169,98,0.3); }
+    .btn-outline {
+      border: 1.5px solid var(--surface-border);
+      color: var(--text);
+      background: var(--surface);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 2rem auto;
+    }
+    .footer-note {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="checkmark">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h1>Thank You!</h1>
+    <p>Your inquiry has been received. Our Etisalat sales team will contact you within <span class="highlight">30 minutes</span> during business hours.</p>
+    <p>For instant assistance, reach us directly on WhatsApp:</p>
+    <div class="cta-row">
+      <a href="https://wa.me/971566999377?text=Hi%2C%20I%20just%20submitted%20an%20inquiry%20on%20your%20website" class="btn btn-gold" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.616l4.575-1.47A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.31-.726-5.994-1.956l-.418-.312-2.715.873.893-2.647-.342-.543A9.958 9.958 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+        WhatsApp Us
+      </a>
+      <a href="https://uaepremiumnumbers.com/" class="btn btn-outline">
+        ← Back to Plans
+      </a>
+    </div>
+    <div class="divider"></div>
+    <p class="footer-note">uaepremiumnumbers.com — Authorized Etisalat Dealer, UAE</p>
+  </div>
+
+  <!-- WhatsApp Click Tracking — fires FB Pixel + GA4 events on every wa.me click -->
+  <link rel="stylesheet" href="/assets/premium.css">
+  <script src="/assets/tracking.js" defer></script>
+  <script src="/assets/premium.js" defer></script>
+  <script>
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('a[href*="wa.me"]');
+      if (link && window.GN) window.GN.trackWhatsAppClick('Thank You Page', '/thank-you');
+    });
+  </script>
+</body>
+</html>
