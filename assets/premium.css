@@ -5,40 +5,63 @@
    shadows, button micro-interactions.
    ============================================================================ */
 
-/* ---- Premium font stack ---- */
-/* Cormorant Garamond for hero & section H1/H2 (luxe serif).
-   Playfair Display kept as fallback (already loaded). DM Sans/Inter for body. */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+/* ---- Premium font stack — Etisalat-tech-premium feel ----
+   Outfit: modern geometric sans (Stripe / Linear / contemporary tech-luxury).
+   Inter: clean modern body sans, super legible.
+   Cormorant Garamond Italic: kept only for H1 accent line (subtle elegance).
+   Playfair Display: fallback. */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@1,400;1,500;1,600&display=swap');
 
 :root {
-  --font-luxe: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
-  --font-modern: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --font-modern: 'Inter', 'Outfit', sans-serif;  /* legacy alias */
+  --font-luxe: 'Outfit', sans-serif;             /* legacy alias */
   --shadow-soft: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
   --shadow-soft-lg: 0 4px 12px rgba(0,0,0,0.05), 0 16px 40px rgba(0,0,0,0.06);
   --shadow-red-glow: 0 8px 24px rgba(237, 28, 36, 0.18);
   --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ---- Hero H1 — luxe serif treatment ---- */
-.hero h1 {
-  font-family: var(--font-luxe);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-}
-.hero h1 span {
-  font-family: var(--font-luxe);
-  font-weight: 500;
-  font-style: italic;
-  letter-spacing: -0.01em;
+/* ---- Global body type — Inter, premium-tech ---- */
+body, p, li, span, a, button, input, textarea, select, label, td, th {
+  font-family: var(--font-body) !important;
 }
 
-/* ---- Section headings — refined ---- */
+/* ---- Hero H1 — Outfit Bold, tight tracking, premium-tech ---- */
+.hero h1 {
+  font-family: var(--font-display) !important;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.0;
+  font-size: clamp(2.4rem, 5.8vw, 4.4rem);
+}
+.hero h1 span {
+  font-family: var(--font-accent) !important;  /* Cormorant Italic accent */
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -0.005em;
+  font-size: 0.78em;
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: var(--gold);
+}
+
+/* ---- All H1/H2/H3 default to Outfit ---- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display) !important;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* ---- Section H2 — Outfit SemiBold ---- */
 .section-heading h2,
 section h2 {
-  font-family: var(--font-luxe);
-  font-weight: 600;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display) !important;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
 }
 
 /* ---- Body text — slightly tighter and more modern ---- */
@@ -46,6 +69,51 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.005em;
+}
+
+/* ---- Brand wordmark (navbar + footer logos) — premium uppercase tracking ---- */
+.nav-logo,
+.navbar-logo,
+.footer-logo {
+  font-family: var(--font-display) !important;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.92rem;
+  color: var(--gold) !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  padding: 0.25rem 0;
+}
+.nav-logo::before,
+.navbar-logo::before,
+.footer-logo::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(237, 28, 36, 0.18);
+  flex-shrink: 0;
+}
+.nav-logo:hover,
+.navbar-logo:hover {
+  color: var(--gold-light) !important;
+}
+.footer-logo {
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+/* RTL adjustment */
+[dir="rtl"] .nav-logo,
+[dir="rtl"] .navbar-logo,
+[dir="rtl"] .footer-logo {
+  letter-spacing: 0.04em; /* less tracking for Arabic-mixed contexts */
 }
 
 /* ---- Hero — softer bg with subtle premium gradient ---- */
