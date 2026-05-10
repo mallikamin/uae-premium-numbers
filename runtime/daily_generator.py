@@ -69,7 +69,7 @@ SINGLE_PER_DAY = 5            # ↓ from 10 — UPN tilts toward grids
 GRID_PER_DAY = 10             # ↑ from 5  — grids are now the bulk
 GRID_NUMBERS_PER_CARD = 6     # each grid shows 6 numbers
 GRID_FROM_PRICE = 188         # AED — matches Probiz, our entry price for Etisalat Post Paid plans
-INTERVAL_MIN = 96             # 24h / POSTS_PER_DAY = 96 min between slots
+INTERVAL_MIN = 100            # User direction 2026-05-10: 100-min spacing (was 96)
 RUNWAY_HOURS = 12             # runway guard: skip if queue tail >12h ahead
 BATCH_DAYS_AFTER_FIRST = 10   # batch 1 was 1 day; batch 2+ are 10 days
 GOLD_PER_DAY = 3              # of 5 singles → 60% Gold (3 Gold + 2 Silver)
@@ -482,11 +482,19 @@ def pick_showcase(scored, target_count, seed_str):
 
 def load_state():
     if not os.path.exists(STATE_FILE):
+        # Fresh-deploy defaults for UPN. GN's defaults assumed gn-001..gn-015
+        # were already seeded by hand (next_post_id=16, batch_day=1 i.e.
+        # "batch 1 already done its 1 day"). UPN deploys from zero, so we
+        # start at upn-001 and batch_day=0 — the first run actually generates.
+        # batch_size_days=10 (vs GN's 1) — UPN skips the 1-day pilot batch
+        # and goes straight to the 10-day cadence, so 10 --force runs queue
+        # 150 posts spread across 10 days without tripping the pause-after-1
+        # review gate that GN uses for batches 1-3.
         return {
             "batch": 1,
-            "batch_day": 1,
-            "batch_size_days": 1,
-            "next_post_id": 16,
+            "batch_day": 0,
+            "batch_size_days": 10,
+            "next_post_id": 1,
             "last_completion_email_for_batch": 0,
             "history": [],
         }
@@ -560,6 +568,15 @@ def git_run(*args):
 def push_cards(month_dir, count):
     git_run("pull", "--rebase", "--autostash")
     git_run("add", "cards/")
+    # Re-run safety: if there's nothing staged (idempotent re-render of an
+    # already-committed batch), skip commit + push instead of crashing.
+    diff = subprocess.run(
+        ["git", "-C", SITE_REPO, "diff", "--cached", "--quiet"],
+        capture_output=True,
+    )
+    if diff.returncode == 0:
+        logging.info("push_cards: no staged diff — already committed; skipping push")
+        return
     msg = f"Daily card drop ({count} cards) — {date.today().isoformat()}"
     git_run("commit", "-m", msg)
     git_run("push")
@@ -596,14 +613,66 @@ def slot_times_for(fallback_date):
     if latest:
         anchor = datetime.strptime(latest, "%Y-%m-%dT%H:%M:%S") + interval
     else:
-        anchor = datetime(fallback_date.year, fallback_date.month, fallback_date.day, 9, 0, 0)
+        # First UPN run: anchor 20:30 PKT on 2026-05-10 per user direction
+        # (first slot fires 30 min after deploy). Subsequent runs anchor off
+        # the queue tail, so this hardcode only matters for the bootstrap.
+        anchor = datetime(2026, 5, 10, 20, 30, 0)
 
     now = datetime.now()
     if anchor < now:
         skip = math.ceil((now - anchor).total_seconds() / (INTERVAL_MIN * 60))
         anchor += interval * skip
 
-    return [anchor + interval * i for i in range(POSTS_PER_DAY)]
+    raw = [anchor + interval * i for i in range(POSTS_PER_DAY)]
+    # Collision avoidance: keep ≥30-min gap from every goldennummbers slot
+    # known on edge (per user direction 2026-05-10).
+    return _avoid_gn_collisions(raw, _gn_scheduled_at_set(),
+                                min_gap_min=30, interval_min=INTERVAL_MIN)
+
+
+def _gn_scheduled_at_set():
+    """Set of datetime objects representing every scheduled_at across GN's
+    approved/ + archive/. Used for collision avoidance — UPN slots get
+    pushed past any GN slot within 30 min."""
+    out: set[datetime] = set()
+    for d in GN_DEDUP_PATHS:
+        for path in glob.glob(f"{d}/*.json"):
+            try:
+                with open(path) as f:
+                    p = json.load(f)
+            except Exception:
+                continue
+            sa = p.get("scheduled_at")
+            if sa:
+                try:
+                    out.add(datetime.strptime(sa, "%Y-%m-%dT%H:%M:%S"))
+                except Exception:
+                    continue
+    return out
+
+
+def _avoid_gn_collisions(slots, gn_slots, min_gap_min=30, interval_min=100):
+    """Walk slots forward, ensuring each is ≥min_gap_min minutes from any GN
+    slot AND ≥interval_min minutes from the previous UPN slot. Cascades."""
+    if not gn_slots:
+        return slots
+    out = []
+    prev = None
+    for s in slots:
+        if prev and (s - prev).total_seconds() < interval_min * 60:
+            s = prev + timedelta(minutes=interval_min)
+        for _ in range(20):  # safety cap on the push loop
+            close = [gs for gs in gn_slots
+                     if abs((s - gs).total_seconds()) < min_gap_min * 60]
+            if not close:
+                break
+            s = max(close) + timedelta(minutes=min_gap_min)
+            # Re-check interval against prev after a GN-driven push
+            if prev and (s - prev).total_seconds() < interval_min * 60:
+                s = prev + timedelta(minutes=interval_min)
+        out.append(s)
+        prev = s
+    return out
 
 
 def build_post_json(post_id, p, sched_at_iso, image_url, link, human):
@@ -648,20 +717,15 @@ def main(force=False):
             short_circuit(f"Batch {state['batch']} marked done in state but "
                           f"{len(pending)} posts still pending in approved/. Holding.")
 
-        # First time we detect completion → send email, set pause flag (for
-        # batches 1–3), and exit. Clearing the pause flag and re-running
-        # falls through to the roll-forward block below.
+        # First time we detect completion → set pause flag (for batches ≤
+        # PAUSE_AFTER_BATCH_LIMIT) and exit. Email INTENTIONALLY OMITTED —
+        # batch-completion is a queue/state change, not an actual post going
+        # live, so per email policy (memory/feedback-email-policy.md) we
+        # log only. Sheet-exhausted + crash emails are kept (real failures).
         if state["last_completion_email_for_batch"] < state["batch"]:
-            body = (f"Batch {state['batch']} is complete.\n\n"
-                    f"Days run: {state['batch_day']}/{state['batch_size_days']}\n"
-                    f"Next post ID would be: gn-{state['next_post_id']:03d}\n\n")
-            if state["batch"] <= PAUSE_AFTER_BATCH_LIMIT:
-                body += ("Per the trust-build policy, the generator is now PAUSED.\n"
-                         "Review the posted batch on FB + IG. To resume, on loom-edge run:\n"
-                         f"  rm {PAUSE_FLAG}\n")
-            else:
-                body += "Auto-rolling into the next batch.\n"
-            notify.send_email(f"[uaepremiumnumbers] Batch {state['batch']} complete", body)
+            logging.info(f"Batch {state['batch']} complete: "
+                         f"days={state['batch_day']}/{state['batch_size_days']}, "
+                         f"next_post_id={state['next_post_id']}")
             state["last_completion_email_for_batch"] = state["batch"]
             save_state(state)
 
@@ -830,33 +894,17 @@ def main(force=False):
     })
     save_state(state)
 
-    # Step 6: email summary (wider columns to accommodate grid labels)
+    # Step 6: log only — daily plan / queue summary email INTENTIONALLY OMITTED.
+    # Per Malik 2026-05-10: emails fire only when a post actually goes live
+    # (meta_poster.email_post_success) or on real failures. Scheduling /
+    # batch / queue summaries are noise. See memory/feedback-email-policy.md.
     grid_count = sum(1 for _, _, label, _ in rows_for_email if label.startswith("GRID"))
     single_count = len(rows_for_email) - grid_count
-    table_lines = [f"{'ID':<10} {'Time':<19} {'Detail':<40} {'Tier':<6}"]
-    for pid, t, disp, tier in rows_for_email:
-        table_lines.append(f"{pid:<10} {t:<19} {disp:<40} {tier:<6}")
-    body = (
-        f"Next batch — first slot {target_date.isoformat()}\n\n"
-        f"Batch {state['batch']} — Day {state['batch_day']}/{state['batch_size_days']}\n"
-        f"{len(rows_for_email)} posts queued ({single_count} singles + {grid_count} grids, "
-        f"FB + IG, every {INTERVAL_MIN} min PKT).\n"
-        f"First: {slots[0].strftime('%Y-%m-%d %H:%M')}  ·  "
-        f"Last: {slots[-1].strftime('%Y-%m-%d %H:%M')}\n\n"
-        + "\n".join(table_lines)
-        + f"\n\nCards pushed to {CARDS_PUBLIC_BASE}/{month_subdir}/\n"
-        f"Grids in {CARDS_PUBLIC_BASE}/{month_subdir}/grids/\n"
-    )
-    notify.send_email(
-        f"[uaepremiumnumbers] Daily plan — {len(rows_for_email)} posts ({single_count}+{grid_count}G) "
-        f"queued for {target_date.isoformat()}",
-        body,
-    )
-
     print(f"Generated {len(rows_for_email)} posts ({single_count} singles, {grid_count} grids) "
           f"for {target_date.isoformat()}")
     logging.info(f"Generated {single_count}S+{grid_count}G for {target_date.isoformat()} "
-                 f"(batch {state['batch']} day {state['batch_day']})")
+                 f"(batch {state['batch']} day {state['batch_day']}) — "
+                 f"first slot {slots[0].strftime('%H:%M')}, last slot {slots[-1].strftime('%H:%M')}")
 
 
 if __name__ == "__main__":
