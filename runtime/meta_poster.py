@@ -386,12 +386,22 @@ def _humanize_delta(target_iso, now_dt):
     return f'in {d}d {h}h'
 
 
+# Whether this brand has a YouTube poster cron deployed alongside meta_poster.
+# Detected at import-time by the presence of youtube_config.json next to this
+# script. UPN starts as FB-only, so the file's absent and the marker returns
+# empty — the success email omits the YT line entirely. When YT comes online
+# (drop a youtube_config.json in BASE_DIR), the marker self-enables.
+HAS_YOUTUBE = os.path.exists(f'{BASE_DIR}/youtube_config.json')
+
+
 def _yt_status_marker(post: dict) -> str:
     """Inline YT status for the per-post email. YT runs on a separate cron
-    (5,35 min) so at the meta_poster email moment, YT for this exact gn-XXX
+    (5,35 min) so at the meta_poster email moment, YT for this exact post
     has almost always NOT fired yet — show ⏳ with the next-tick window so
-    the recipient knows it's queued, not skipped.
-    """
+    the recipient knows it's queued, not skipped. Returns '' when the brand
+    has no YT pipeline (UPN until we deploy youtube_shorts_poster.py)."""
+    if not HAS_YOUTUBE:
+        return ''
     if post.get('posted_youtube'):
         vid = post.get('youtube_video_id', '')
         return f'YT ✅ youtu.be/{vid}' if vid else 'YT ✅'
@@ -409,7 +419,9 @@ def email_post_success(post):
     plats = []
     if post.get('posted_fb'): plats.append('FB ✅')
     if post.get('posted_ig'): plats.append('IG ✅')
-    plats.append(_yt_status_marker(post))
+    yt_marker = _yt_status_marker(post)
+    if yt_marker:
+        plats.append(yt_marker)
 
     now_dt = datetime.now()
     nxt, nxt_when = find_next_due()
