@@ -502,16 +502,41 @@ def save_state(state):
 # --------- exclusion / dedup ---------
 
 def load_used_digits():
-    used = set()
-    for path in glob.glob(f"{ARCHIVE}/*.json") + glob.glob(f"{APPROVED}/*.json"):
-        try:
-            with open(path) as f:
-                p = json.load(f)
+    """Build the dedupe set so UPN never posts a number that has already
+    been queued or posted — by UPN OR by goldennummbers.
+
+    Sources scanned:
+      • UPN's own archive/   (posted)
+      • UPN's own approved/  (currently scheduled)
+      • GN's archive/  + approved/  via GN_DEDUP_PATHS  (cross-brand)
+
+    Both fields are honored:
+      • 'digits'      — present on single-number posts
+      • 'digits_list' — present on grid posts (6+ numbers per card)
+    Including digits_list means a number GN used in a grid still gets
+    excluded from UPN's single-pick pool. Tighter than GN's own dedupe
+    (which only checks 'digits'), but appropriate for UPN since duplicating
+    GN's content would defeat the whole separate-brand point.
+    """
+    used: set[str] = set()
+    patterns = [f"{ARCHIVE}/*.json", f"{APPROVED}/*.json"]
+    for gn_dir in GN_DEDUP_PATHS:
+        patterns.append(f"{gn_dir}/*.json")
+
+    for pattern in patterns:
+        for path in glob.glob(pattern):
+            try:
+                with open(path) as f:
+                    p = json.load(f)
+            except Exception as e:
+                logging.warning(f"Could not parse {path}: {e}")
+                continue
             d = p.get("digits") or ""
             if d:
                 used.add(d)
-        except Exception as e:
-            logging.warning(f"Could not parse {path}: {e}")
+            for gd in (p.get("digits_list") or []):
+                if gd:
+                    used.add(gd)
     return used
 
 
