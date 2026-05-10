@@ -1,0 +1,15 @@
+# Secrets — never commit
+.fb-page-token.txt
+.fb-*.txt
+.ig-*.txt
+.tt-*.txt
+.yt-*.txt
+social-config/config.json
+social-config/*.token
+*.env
+.env
+.env.*
+!.env.example
+
+# Local Claude project state (memory + per-machine cache)
+.claude/
