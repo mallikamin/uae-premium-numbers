@@ -138,13 +138,13 @@ def _pick(variants, digits, salt=0):
 # --- FB variation pools ---
 
 FB_OPENERS = [
-    "Just listed: {disp}",
-    "{disp} — {tier_lc} tier, available today.",
-    "New on the board: {disp}",
-    "{disp} ({tier} tier) is on the shelf.",
-    "Fresh listing — {disp}.",
-    "{disp} is open for booking.",
-    "Added today: {disp} — {tier_lc} tier.",
+    "Etisalat Postpaid from AED 188/mo · paired with premium {disp} ({tier_lc} tier).",
+    "AED 188 Etisalat plan + premium number {disp} — {tier} tier, available today.",
+    "Today's bundle: Etisalat Postpaid + {disp} ({tier_lc} tier).",
+    "Pick your Etisalat plan from AED 188 and pair it with {disp} — {tier} tier.",
+    "Etisalat 188 plan available · with premium number {disp} ({tier_lc}).",
+    "Bundle of the day: {disp} ({tier} tier) on Etisalat Postpaid (from AED 188).",
+    "Premium UAE number {disp} ({tier_lc}) · ready on any Etisalat plan from AED 188.",
 ]
 
 FB_CTAS = [
@@ -197,12 +197,12 @@ def fb_caption(p, human):
 # --- IG variation pools ---
 
 IG_OPENERS = [
-    "📱 {disp}",
-    "🆕 {disp}",
-    "Available today: {disp}",
-    "On the board: {disp}",
-    "New listing — {disp}",
-    "{disp} 📲",
+    "📱 Etisalat 188 plan + {disp}",
+    "🆕 Etisalat Postpaid · {disp}",
+    "Available today: {disp} on Etisalat Postpaid",
+    "On the board: {disp} · plans from AED 188",
+    "Etisalat Postpaid bundle — {disp}",
+    "{disp} 📲 paired with Etisalat 188 plan",
 ]
 
 IG_HOOKS = [
@@ -219,15 +219,15 @@ IG_CTAS = [
     "{wa} on WhatsApp — first to call wins.",
 ]
 
-IG_TAGS_CORE = ["#GoldenNumber", "#UAE"]
+IG_TAGS_CORE = ["#UAEPremiumNumbers", "#EtisalatPostpaid", "#UAE"]
 IG_TAGS_GEO = [
     "#Dubai", "#AbuDhabi", "#Sharjah", "#Ajman", "#RAK",
     "#UAELife", "#DubaiLife", "#MyDubai", "#AbuDhabiLife",
 ]
 IG_TAGS_TYPE = [
     "#VanityNumber", "#PhoneNumber", "#LuckyNumber", "#PremiumNumber",
-    "#SpecialNumber", "#VIPNumber", "#BusinessNumber", "#GoldenNumbers",
-    "#UAENumbers", "#MobileNumber",
+    "#SpecialNumber", "#VIPNumber", "#BusinessNumber", "#PostpaidPlan",
+    "#UAENumbers", "#MobileNumber", "#EtisalatPlans", "#UAEMobile",
 ]
 IG_TAGS_NETWORK_E = ["#EtisalatNumber", "#Etisalat", "#etisalatuae"]
 # NOTE: goldennummbers is an Etisalat-positioned brand. NEVER reintroduce
@@ -263,12 +263,12 @@ def _build_ig_hashtags(digits):
 # stack ("ETISALAT", "Post Paid Plans") so we surface in the same searches.
 
 GRID_FB_OPENERS = [
-    "✨ Premium ETISALAT Numbers — Available Today",
-    "Premium Etisalat Numbers · Post Paid Plans Available",
-    "Hand-Picked ETISALAT Numbers — Take a Look",
-    "ETISALAT Premium Numbers · Post Paid Plans",
-    "Premium ETISALAT Numbers — Choose Yours",
-    "ETISALAT Post Paid Plans · Premium Numbers Available",
+    "✨ Etisalat Postpaid · Premium UAE Numbers · From AED 188/mo",
+    "Etisalat 188 plan paired with hand-picked premium numbers",
+    "📲 Premium ETISALAT Numbers + Postpaid Plans — Available Today",
+    "Etisalat Postpaid · Choose from these premium numbers",
+    "Hand-Picked ETISALAT Numbers · Plans from AED 188",
+    "ETISALAT Plans + Premium Numbers · Same-Day Delivery",
 ]
 
 GRID_FB_CTAS = [
@@ -280,17 +280,17 @@ GRID_FB_CTAS = [
 ]
 
 GRID_IG_OPENERS = [
-    "🪙 Premium ETISALAT Numbers",
-    "📱 ETISALAT Premium Numbers · Post Paid",
-    "✨ Hand-Picked ETISALAT Numbers",
-    "📲 Premium ETISALAT Post Paid Plans",
-    "🆕 New ETISALAT Numbers Available",
+    "🪙 Etisalat Postpaid · Premium UAE Numbers",
+    "📱 Etisalat Plans + Premium ETISALAT Numbers",
+    "✨ AED 188/mo · Hand-Picked ETISALAT Numbers",
+    "📲 Premium Etisalat Numbers · Postpaid Plans Available",
+    "🆕 Etisalat 188 plan + choose from these premium numbers",
 ]
 
 GRID_IG_HASHTAGS = (
-    "#PremiumETISALATNumbers #EtisalatPostPaid #EtisalatNumbers #etisalatuae "
-    "#PostPaidPlans #VIPNumber #PremiumNumber #GoldenNumber #UAE #Dubai "
-    "#AbuDhabi #Sharjah #UAENumbers #MobileNumber #VanityNumber"
+    "#UAEPremiumNumbers #EtisalatPlans #EtisalatPostpaid #PremiumNumber "
+    "#PostpaidPlan #VIPNumber #UAE #Dubai #AbuDhabi #Sharjah #Ajman "
+    "#UAENumbers #MobileNumber #VanityNumber #Etisalat #etisalatuae"
 )
 
 
