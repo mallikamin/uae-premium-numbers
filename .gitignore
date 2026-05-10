@@ -6,6 +6,14 @@
 .yt-*.txt
 social-config/config.json
 social-config/*.token
+runtime/config.json
+runtime/approved/*.json
+runtime/archive/*.json
+runtime/logs/
+runtime/last_post.json
+runtime/CIRCUIT_BREAKER.flag
+runtime/CIRCUIT_BREAKER.alert_sent
+runtime/meta_poster.lock
 *.env
 .env
 .env.*
