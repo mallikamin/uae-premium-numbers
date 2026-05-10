@@ -551,28 +551,44 @@ def main():
             failures.append(f'FB HTTP {code}: {text[:140]}')
 
     if 'instagram' in platforms and not post.get('posted_ig'):
-        r = post_instagram(cfg, post['caption_ig'], img)
-        if r is not None and r.status_code in (200, 201):
-            post['posted_ig'] = True
-            post['posted_ig_date'] = today
-            try:
-                resp_json = r.json()
-                # media_publish returns {id} = ig_media_id, queryable for insights.
-                post['ig_media_id'] = resp_json.get('id')
-                post['ig_posted_at_iso'] = datetime.now().isoformat(timespec='seconds')
-            except Exception as e:
-                logging.warning(f'IG OK but media_id parse failed: {e}')
-            logging.info(f'IG OK: {post["id"]} ig_media_id={post.get("ig_media_id")}')
-            print(f'IG posted: {post["id"]}')
+        if not cfg.get('ig_user_id'):
+            # IG account not yet linked to this FB Page (Bilal's 3-step linkage
+            # pending). The default daily_generator post template includes
+            # 'instagram' in platforms; until ig_user_id is wired in config.json,
+            # we skip IG silently and the post is treated as FB-only success.
+            # When IG becomes available, set ig_user_id in config and the same
+            # platform list works without changes — IG starts posting on the
+            # next run.
+            logging.info(f'IG skip for {post["id"]} — ig_user_id not configured; FB-only')
         else:
-            code = r.status_code if r is not None else 'no response'
-            text = r.text[:200] if r is not None else ''
-            logging.error(f'IG FAIL: {post["id"]} {code} {text}')
-            print(f'IG failed: {post["id"]}', file=sys.stderr)
-            failures.append(f'IG HTTP {code}: {text[:140]}')
+            r = post_instagram(cfg, post['caption_ig'], img)
+            if r is not None and r.status_code in (200, 201):
+                post['posted_ig'] = True
+                post['posted_ig_date'] = today
+                try:
+                    resp_json = r.json()
+                    # media_publish returns {id} = ig_media_id, queryable for insights.
+                    post['ig_media_id'] = resp_json.get('id')
+                    post['ig_posted_at_iso'] = datetime.now().isoformat(timespec='seconds')
+                except Exception as e:
+                    logging.warning(f'IG OK but media_id parse failed: {e}')
+                logging.info(f'IG OK: {post["id"]} ig_media_id={post.get("ig_media_id")}')
+                print(f'IG posted: {post["id"]}')
+            else:
+                code = r.status_code if r is not None else 'no response'
+                text = r.text[:200] if r is not None else ''
+                logging.error(f'IG FAIL: {post["id"]} {code} {text}')
+                print(f'IG failed: {post["id"]}', file=sys.stderr)
+                failures.append(f'IG HTTP {code}: {text[:140]}')
 
     fb_done = ('facebook' not in platforms) or post.get('posted_fb')
-    ig_done = ('instagram' not in platforms) or post.get('posted_ig')
+    # IG considered "done" if not requested, already posted, OR not configured
+    # (latter covers the pre-Bilal-linkage state — see the IG branch above).
+    ig_done = (
+        ('instagram' not in platforms)
+        or post.get('posted_ig')
+        or not cfg.get('ig_user_id')
+    )
     full_success = fb_done and ig_done
 
     # Mark "we posted to at least one platform" — start the cooldown clock
