@@ -14,6 +14,8 @@ runtime/last_post.json
 runtime/CIRCUIT_BREAKER.flag
 runtime/CIRCUIT_BREAKER.alert_sent
 runtime/meta_poster.lock
+runtime/sample-cards/
+runtime/__pycache__/
 *.env
 .env
 .env.*
