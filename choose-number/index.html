@@ -1194,15 +1194,22 @@ a { color: inherit; }
 <!-- ============ JAVASCRIPT ============ -->
 <script>
 /* ========================================
-   CONFIGURATION — Update SHEET_ID here when it changes
+   CONFIGURATION — Add/remove sheets here. All sheets must share the same
+   column schema (Category, MSISDN, With Zero, Status). Numbers from all
+   sheets are merged and deduped by digits.
    ======================================== */
-var SHEET_ID = '1qAw1YQkKEbq-R3LullCBNr0MweGfC2KEO-rot9ff8dw';
-var SHEET_GID = '0';
-var CSV_URLS = [
-  'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&headers=1&gid=' + SHEET_GID,
-  'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + SHEET_GID,
-  'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&headers=1'
+var SHEETS = [
+  { id: '1qAw1YQkKEbq-R3LullCBNr0MweGfC2KEO-rot9ff8dw', gid: '0' },
+  { id: '1Lmfsc-0H0R0hXv0wddktRwisHI74yu9JfrtxPajm9hk', gid: '0' }
 ];
+function buildCsvUrls(sheet) {
+  var base = 'https://docs.google.com/spreadsheets/d/' + sheet.id;
+  return [
+    base + '/gviz/tq?tqx=out:csv&headers=1&gid=' + sheet.gid,
+    base + '/export?format=csv&gid=' + sheet.gid,
+    base + '/gviz/tq?tqx=out:csv&headers=1'
+  ];
+}
 var WA_NUMBER = '971566999377';
 var ATTR_STORAGE_KEY = 'es_partner_ref';
 var ATTR_DAYS = 90;
@@ -1515,9 +1522,28 @@ function loadNumbers() {
   numbersGrid.innerHTML = '';
   resultsHeader.style.display = 'none';
 
-  fetchFirstAvailableCsv(CSV_URLS)
-    .then(function(csv) {
-      allNumbers = parseCSV(csv);
+  var sheetPromises = SHEETS.map(function(s) {
+    return fetchFirstAvailableCsv(buildCsvUrls(s))
+      .then(function(csv) { return parseCSV(csv); })
+      .catch(function(err) {
+        console.warn('Sheet load failed:', s.id, err && err.message);
+        return [];
+      });
+  });
+
+  Promise.all(sheetPromises)
+    .then(function(results) {
+      var merged = [];
+      var seen = {};
+      results.forEach(function(list) {
+        list.forEach(function(n) {
+          var key = n.digits;
+          if (!key || seen[key]) return;
+          seen[key] = true;
+          merged.push(n);
+        });
+      });
+      allNumbers = merged;
       if (allNumbers.length === 0) throw new Error('No numbers parsed');
       loadingState.style.display = 'none';
       applyFilters();
