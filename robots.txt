@@ -6,8 +6,9 @@ Allow: /
 Disallow: /generate_ads.py
 Disallow: /generate_assets.py
 
-# Sitemap
+# Sitemaps
 Sitemap: https://uaepremiumnumbers.com/sitemap.xml
+Sitemap: https://uaepremiumnumbers.com/sitemap-numbers.xml
 
 # AI Crawlers — welcome
 User-agent: GPTBot
