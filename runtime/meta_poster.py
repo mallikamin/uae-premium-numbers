@@ -256,7 +256,19 @@ def image_url(prompt):
         logging.warning(f'Image failed: {e}')
     return None
 
-def post_facebook(cfg, caption, link, img_url):
+def post_facebook(cfg, caption, link, img_url, video_url=None):
+    if video_url:
+        # FB Video post via file_url. Returns {id: <video_id>}; auto-published.
+        r = requests.post(
+            f'{GRAPH}/{cfg["fb_page_id"]}/videos',
+            data={
+                'file_url': video_url,
+                'description': caption,
+                'access_token': cfg['fb_page_token'],
+            },
+            timeout=60
+        )
+        return r
     if img_url:
         r = requests.post(
             f'{GRAPH}/{cfg["fb_page_id"]}/photos',
@@ -270,7 +282,48 @@ def post_facebook(cfg, caption, link, img_url):
         r = requests.post(f'{GRAPH}/{cfg["fb_page_id"]}/feed', data=params, timeout=30)
     return r
 
-def post_instagram(cfg, caption, img_url):
+def post_instagram(cfg, caption, img_url, video_url=None):
+    if video_url:
+        # IG REELS: create REELS container -> poll status -> publish.
+        # REELS processing can take 30-120s; we poll up to 150s.
+        r = requests.post(
+            f'{GRAPH}/{cfg["ig_user_id"]}/media',
+            data={
+                'media_type': 'REELS',
+                'video_url': video_url,
+                'caption': caption,
+                'share_to_feed': 'true',
+                'access_token': cfg['fb_page_token'],
+            },
+            timeout=30
+        )
+        if r.status_code not in (200, 201):
+            logging.error(f'IG REELS container failed: {r.status_code} {r.text[:200]}')
+            return r
+        container_id = r.json().get('id')
+        if not container_id:
+            logging.error('IG REELS container: no id returned')
+            return r
+        for _ in range(30):  # 30 * 5s = 150s
+            time.sleep(5)
+            status_r = requests.get(
+                f'{GRAPH}/{container_id}',
+                params={'fields': 'status_code', 'access_token': cfg['fb_page_token']},
+                timeout=15
+            )
+            sc = status_r.json().get('status_code')
+            if sc == 'FINISHED':
+                break
+            if sc == 'ERROR':
+                logging.error(f'IG REELS processing ERROR: {status_r.text[:200]}')
+                return status_r
+        pub = requests.post(
+            f'{GRAPH}/{cfg["ig_user_id"]}/media_publish',
+            data={'creation_id': container_id, 'access_token': cfg['fb_page_token']},
+            timeout=30
+        )
+        return pub
+
     if not img_url:
         logging.warning('Instagram skipped — no image URL')
         return None
@@ -538,8 +591,10 @@ def main():
     platforms = post.get('platforms', ['facebook', 'instagram'])
     failures = []  # human-readable failure descriptions for the email
 
+    video_url = post.get('video_url')
+
     if 'facebook' in platforms and not post.get('posted_fb'):
-        r = post_facebook(cfg, post['caption_fb'], post.get('link'), img)
+        r = post_facebook(cfg, post['caption_fb'], post.get('link'), img, video_url=video_url)
         # requests.Response is falsy on 4xx/5xx (Response.ok is False), so use
         # `is not None` to distinguish "got an error response" from "no response".
         if r is not None and r.status_code in (200, 201):
@@ -573,7 +628,7 @@ def main():
             # next run.
             logging.info(f'IG skip for {post["id"]} — ig_user_id not configured; FB-only')
         else:
-            r = post_instagram(cfg, post['caption_ig'], img)
+            r = post_instagram(cfg, post['caption_ig'], img, video_url=video_url)
             if r is not None and r.status_code in (200, 201):
                 post['posted_ig'] = True
                 post['posted_ig_date'] = today

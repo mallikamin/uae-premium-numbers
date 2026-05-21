@@ -33,7 +33,7 @@ const TIKTOK_OAUTH_SCOPES    = "user.info.basic,video.publish,video.upload";
 // wa.me with the prefill text including Ref:. Lets us attribute every
 // WhatsApp message back to a specific Rail + creative even though the
 // FB ad's prefill text is static.
-const WA_NUMBER = "971566999377";
+const WA_NUMBER = "971569028087";
 const RAIL_PREFILLS = {
   A: "Hi! I'm interested in a premium Etisalat number from your ad.\n\nName: \nCity: \nBudget (AED): ",
   B: "Hi! I'd like a free golden Etisalat number with the postpaid plan.\n\nName: \nCity: \nBudget (AED): ",

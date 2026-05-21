@@ -64,15 +64,76 @@ LINK_BASE = "https://uaepremiumnumbers.com/choose-number/"
 ID_PREFIX = "upn"             # post IDs are upn-001, upn-002, ...
 BRAND_NAME = "uae-premium-numbers"
 PAUSE_AFTER_BATCH_LIMIT = 3   # pause+ping for batches 1–3, auto-roll for 4+
-POSTS_PER_DAY = 15
-SINGLE_PER_DAY = 5            # ↓ from 10 — UPN tilts toward grids
-GRID_PER_DAY = 10             # ↑ from 5  — grids are now the bulk
+POSTS_PER_DAY = 8             # 2026-05-18: 15→8/day (FB+IG cool-down after WABA portfolio incident)
+SINGLE_PER_DAY = 3            # UPN keeps its grid-heavy tilt at lower volume
+GRID_PER_DAY = 5              # grids remain the bulk
 GRID_NUMBERS_PER_CARD = 6     # each grid shows 6 numbers
 GRID_FROM_PRICE = 188         # AED — matches Probiz, our entry price for Etisalat Post Paid plans
-INTERVAL_MIN = 100            # User direction 2026-05-10: 100-min spacing (was 96)
+INTERVAL_MIN = 180            # 24h / 8 = 180 min between slots (3h cadence)
 RUNWAY_HOURS = 12             # runway guard: skip if queue tail >12h ahead
 BATCH_DAYS_AFTER_FIRST = 10   # batch 1 was 1 day; batch 2+ are 10 days
-GOLD_PER_DAY = 3              # of 5 singles → 60% Gold (3 Gold + 2 Silver)
+GOLD_PER_DAY = 2              # of 3 singles → ~67% Gold
+
+# Auto-tuner output — written by creative_analytics/tuner.py (env-var-scoped
+# to UPN via run_analytics.sh). Missing file → defaults above (cold-start).
+TUNING_STATE_FILE = f'{BASE_DIR}/creative_analytics/tuning_state.json'
+_HOUR_BUCKET_CENTER_PKT = {"night": 3, "morning": 9, "midday": 15, "evening": 21}
+
+
+def load_tuning() -> dict:
+    blank = {
+        "hour": {}, "tier": {}, "format": {}, "brand_variant": {},
+        "winning_hour_bucket": "morning",
+        "recommendations": [],
+    }
+    try:
+        with open(TUNING_STATE_FILE) as f:
+            state = json.load(f)
+    except Exception:
+        return blank
+    t = state.get("tuning", {}) or {}
+    h = t.get("hour_weights", {}) or {}
+    winning = max(h.items(), key=lambda kv: kv[1], default=("morning", 1.0))[0] if h else "morning"
+    return {
+        "hour":          h,
+        "tier":          t.get("tier_weights", {}) or {},
+        "format":        t.get("format_weights", {}) or {},
+        "brand_variant": t.get("brand_variant_weights", {}) or {},
+        "winning_hour_bucket": winning,
+        "recommendations":    state.get("recommendations", []),
+    }
+
+
+def tuned_mix(tuning: dict) -> dict:
+    """Apply tuner weights ON TOP of UPN defaults (5 singles / 10 grids).
+    All-neutral weights pass through unchanged."""
+    fw = tuning.get("format", {}) or {}
+    sw = float(fw.get("single-card", 1.0))
+    gw = float(fw.get("grid",        1.0))
+    if (sw == 1.0 and gw == 1.0) or (sw + gw) <= 0:
+        singles, grids = SINGLE_PER_DAY, GRID_PER_DAY
+    else:
+        biased_s = SINGLE_PER_DAY * sw
+        biased_g = GRID_PER_DAY * gw
+        tot = biased_s + biased_g
+        singles = max(1, min(POSTS_PER_DAY - 1, round(POSTS_PER_DAY * biased_s / tot)))
+        grids = POSTS_PER_DAY - singles
+
+    tw = tuning.get("tier", {}) or {}
+    g_w = float(tw.get("Gold",   1.0))
+    s_w = float(tw.get("Silver", 1.0))
+    if (g_w == 1.0 and s_w == 1.0) or (g_w + s_w) <= 0:
+        gold = max(0, min(singles, round(singles * GOLD_PER_DAY / SINGLE_PER_DAY)))
+    else:
+        biased_g = GOLD_PER_DAY * g_w
+        biased_s = (SINGLE_PER_DAY - GOLD_PER_DAY) * s_w
+        tot = biased_g + biased_s
+        gold = max(0, min(singles, round(singles * biased_g / tot)))
+
+    winning = tuning.get("winning_hour_bucket")
+    anchor_hour_pkt = _HOUR_BUCKET_CENTER_PKT.get(winning, 9) if winning else 9
+    return {"singles": singles, "grids": grids, "gold_in_singles": gold,
+            "anchor_hour_pkt": anchor_hour_pkt}
 
 os.makedirs(f'{BASE_DIR}/logs', exist_ok=True)
 logging.basicConfig(filename=LOG, level=logging.INFO,
@@ -351,12 +412,16 @@ def pick_grid_numbers(all_rows: list[dict], count: int, numbers_per_card: int,
     return out
 
 
-def pick_brand_variants_for_day(count: int, seed_str: str) -> list[str]:
+def pick_brand_variants_for_day(count: int, seed_str: str,
+                                tuning: dict | None = None) -> list[str]:
     """Weighted random pick of brand variants for the day's grids.
-    Default weights V1:V2:V3 = 2:2:1 → over time ~40%/40%/20%."""
+    Default weights V1:V2:V3 = 2:2:1 → over time ~40%/40%/20%.
+    Multiplied by tuner's per-variant weight if `tuning` supplied."""
     rng = random.Random(f"{seed_str}-brand")
     variants = list(BRAND_VARIANTS.keys())
-    weights = [BRAND_VARIANTS[v].get("weight", 1) for v in variants]
+    bv_w = (tuning or {}).get("brand_variant", {})
+    weights = [BRAND_VARIANTS[v].get("weight", 1) * float(bv_w.get(v, 1.0))
+               for v in variants]
     return rng.choices(variants, weights=weights, k=count)
 
 
@@ -449,13 +514,15 @@ def _stratified_sample(pool, n_want, rng):
     return picks
 
 
-def pick_showcase(scored, target_count, seed_str):
-    """Showcase mix: GOLD_PER_DAY Gold + remainder Silver, each tier stratified by
+def pick_showcase(scored, target_count, seed_str, gold_target: int | None = None):
+    """Showcase mix: gold_target Gold + remainder Silver, each tier stratified by
     score quartile. Seeded by date so a given day is reproducible if re-fired.
-    Ratio is computed against SINGLE_PER_DAY (post-grid split): 6 Gold / 4 Silver = 60% Gold."""
+    Defaults to GOLD_PER_DAY/SINGLE_PER_DAY ratio; tuner-overridable."""
     rng = random.Random(seed_str)
 
-    gold_target = max(1, round(target_count * GOLD_PER_DAY / SINGLE_PER_DAY))
+    if gold_target is None:
+        gold_target = max(1, round(target_count * GOLD_PER_DAY / SINGLE_PER_DAY))
+    gold_target = max(0, min(target_count, gold_target))
     silver_target = target_count - gold_target
 
     gold_pool = [x for x in scored if x["category"] == "Gold"]
@@ -599,14 +666,11 @@ def _latest_scheduled_at():
     return latest
 
 
-def slot_times_for(fallback_date):
+def slot_times_for(fallback_date, anchor_hour_pkt: int = 9):
     """POSTS_PER_DAY slots spaced INTERVAL_MIN apart, anchored to the queue tail.
 
-    Anchor = (latest scheduled_at across approved/+archive/) + INTERVAL_MIN.
-    Fresh deploy with empty queue: anchor = fallback_date 09:00 PKT.
-    Anchor in the past (downtime, skipped cron, manual edit): advance by
-    whole intervals into the future — skips missed slots rather than
-    bursting them on the next run.
+    `anchor_hour_pkt` (default 9) is the bootstrap hour when the queue is
+    empty. Auto-tuner shifts this to the winning hour bucket's centre PKT.
     """
     interval = timedelta(minutes=INTERVAL_MIN)
     latest = _latest_scheduled_at()
@@ -616,6 +680,7 @@ def slot_times_for(fallback_date):
         # First UPN run: anchor 20:30 PKT on 2026-05-10 per user direction
         # (first slot fires 30 min after deploy). Subsequent runs anchor off
         # the queue tail, so this hardcode only matters for the bootstrap.
+        # After bootstrap, tuner-supplied anchor_hour_pkt drives placement.
         anchor = datetime(2026, 5, 10, 20, 30, 0)
 
     now = datetime.now()
@@ -763,8 +828,17 @@ def main(force=False):
     # Step 1.6: compute slot times (anchored to queue tail) and derive
     # target_date from the first slot — this is the calendar day the new
     # batch first fires on, used for card subdir, RNG seed, and email.
+    # Auto-tuner reshapes anchor hour + singles/grids/Gold mix per engagement.
+    tuning = load_tuning()
+    mix = tuned_mix(tuning)
+    logging.info(
+        f"Tuner: anchor={mix['anchor_hour_pkt']:02d}:00 PKT, "
+        f"singles={mix['singles']} grids={mix['grids']} "
+        f"gold_in_singles={mix['gold_in_singles']} "
+        f"(vs defaults {SINGLE_PER_DAY}/{GRID_PER_DAY}/{GOLD_PER_DAY})"
+    )
     fallback_date = (datetime.now() + timedelta(days=1)).date()
-    slots = slot_times_for(fallback_date)
+    slots = slot_times_for(fallback_date, anchor_hour_pkt=mix["anchor_hour_pkt"])
     target_date = slots[0].date()
     month_subdir = target_date.strftime("%Y-%m")
     month_dir_fs = os.path.join(CARDS_TREE, month_subdir)
@@ -795,14 +869,17 @@ def main(force=False):
         )
         short_circuit("No candidates available; sheet may be exhausted.")
 
-    # Step 2.5: pick singles (10) and grids (5) — singles dedup against `used`,
-    # grids draw from full sheet (duplicates with already-posted OK per user instruction)
-    singles = pick_showcase(scored, SINGLE_PER_DAY, target_date.isoformat())
-    if len(singles) < SINGLE_PER_DAY:
-        logging.warning(f"Only {len(singles)} unique single candidates available (wanted {SINGLE_PER_DAY}).")
+    # Step 2.5: pick singles + grids using TUNED counts (defaults 5/10).
+    singles = pick_showcase(scored, mix["singles"], target_date.isoformat(),
+                            gold_target=mix["gold_in_singles"])
+    if len(singles) < mix["singles"]:
+        logging.warning(f"Only {len(singles)} unique single candidates available "
+                        f"(wanted {mix['singles']}).")
 
-    grid_number_sets = pick_grid_numbers(rows, GRID_PER_DAY, GRID_NUMBERS_PER_CARD, target_date.isoformat())
-    grid_brand_variants = pick_brand_variants_for_day(GRID_PER_DAY, target_date.isoformat())
+    grid_number_sets = pick_grid_numbers(rows, mix["grids"], GRID_NUMBERS_PER_CARD,
+                                          target_date.isoformat())
+    grid_brand_variants = pick_brand_variants_for_day(mix["grids"], target_date.isoformat(),
+                                                      tuning=tuning)
 
     total_picked = len(singles) + len(grid_number_sets)
     if total_picked < POSTS_PER_DAY:

@@ -13,13 +13,55 @@ Scoring favors patterns that resonate with UAE buyers:
 - Mild penalty on 4 in the last block (Asian-influenced market)
 """
 from __future__ import annotations
-import argparse, csv, io, json, sys, urllib.request
+import argparse, csv, io, json, os, sys, urllib.request
+from pathlib import Path
 
-SHEETS = [
+# ───── Source-sheet config ──────────────────────────────────────────────
+# Default (hardcoded) inventory sheets. The real source of truth at runtime
+# is `sheets.json` next to this file (or path in env var SHEETS_CONFIG):
+#
+#   {"sheets": ["id1", "id2", ...], "gid": "0"}
+#
+# If sheets.json is present, it OVERRIDES the hardcoded SHEETS below.
+# To swap inventory sources without a code change or sync.sh, just edit
+# sheets.json on loom-edge — the next cron run picks it up automatically.
+_DEFAULT_SHEETS = [
+    # Primary inventory sheet
     "1qAw1YQkKEbq-R3LullCBNr0MweGfC2KEO-rot9ff8dw",
-    "1XQ4qvJNb-O-Av9JWNrcE4AWYM8nmPZZ1KLkyB6MD7ZA",
+    # Probiz secondary inventory (Gold/Platinum, allocation-tracked).
+    # Confirmed canonical 2026-05-15 — superseded the older stale 1XQ4qvJNb...
+    "1Lmfsc-0H0R0hXv0wddktRwisHI74yu9JfrtxPajm9hk",
 ]
-GID = "0"
+_DEFAULT_GID = "0"
+
+
+def _load_sheet_config() -> tuple[list[str], str]:
+    """Read sheets.json if present; otherwise return hardcoded defaults.
+    Resolution order:
+      1. env var SHEETS_CONFIG  (absolute path)
+      2. ./sheets.json next to this script
+      3. hardcoded _DEFAULT_SHEETS
+    """
+    candidates = []
+    env_path = os.environ.get("SHEETS_CONFIG")
+    if env_path:
+        candidates.append(Path(env_path))
+    candidates.append(Path(__file__).resolve().parent / "sheets.json")
+    for p in candidates:
+        try:
+            if p.exists():
+                cfg = json.loads(p.read_text())
+                sheets = cfg.get("sheets") or []
+                gid = str(cfg.get("gid", _DEFAULT_GID))
+                if sheets and all(isinstance(s, str) for s in sheets):
+                    return sheets, gid
+        except Exception:
+            continue
+    return list(_DEFAULT_SHEETS), _DEFAULT_GID
+
+
+SHEETS, GID = _load_sheet_config()
+SHEET_ID = SHEETS[0]
 SHEET_ID = SHEETS[0]
 CSV_URL = (
     f"https://docs.google.com/spreadsheets/d/{SHEET_ID}"
