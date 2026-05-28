@@ -64,15 +64,15 @@ LINK_BASE = "https://uaepremiumnumbers.com/choose-number/"
 ID_PREFIX = "upn"             # post IDs are upn-001, upn-002, ...
 BRAND_NAME = "uae-premium-numbers"
 PAUSE_AFTER_BATCH_LIMIT = 3   # pause+ping for batches 1–3, auto-roll for 4+
-POSTS_PER_DAY = 8             # 2026-05-18: 15→8/day (FB+IG cool-down after WABA portfolio incident)
-SINGLE_PER_DAY = 3            # UPN keeps its grid-heavy tilt at lower volume
-GRID_PER_DAY = 5              # grids remain the bulk
+POSTS_PER_DAY = 3             # 2026-05-28: 8→3/day post-IG-action-block resume (gentle volume to avoid re-trip)
+SINGLE_PER_DAY = 1            # UPN keeps its grid-heavy tilt at lower volume
+GRID_PER_DAY = 2              # grids remain the bulk
 GRID_NUMBERS_PER_CARD = 6     # each grid shows 6 numbers
 GRID_FROM_PRICE = 188         # AED — matches Probiz, our entry price for Etisalat Post Paid plans
-INTERVAL_MIN = 180            # 24h / 8 = 180 min between slots (3h cadence)
+INTERVAL_MIN = 480            # 24h / 3 = 480 min between slots (8h cadence)
 RUNWAY_HOURS = 12             # runway guard: skip if queue tail >12h ahead
 BATCH_DAYS_AFTER_FIRST = 10   # batch 1 was 1 day; batch 2+ are 10 days
-GOLD_PER_DAY = 2              # of 3 singles → ~67% Gold
+GOLD_PER_DAY = 1              # of 1 single → 100% Gold
 
 # Auto-tuner output — written by creative_analytics/tuner.py (env-var-scoped
 # to UPN via run_analytics.sh). Missing file → defaults above (cold-start).

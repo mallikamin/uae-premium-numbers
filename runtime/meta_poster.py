@@ -282,6 +282,47 @@ def post_facebook(cfg, caption, link, img_url, video_url=None):
         r = requests.post(f'{GRAPH}/{cfg["fb_page_id"]}/feed', data=params, timeout=30)
     return r
 
+def verify_ig_publish_after_error(cfg, expected_caption, max_wait_s=30, lookback=3):
+    """Probe IG /media to see if a publish call that returned non-2xx actually
+    went live anyway. Meta's rate limiter sometimes returns 403/4/2207051 on
+    the same request that successfully publishes — without this verify step,
+    a retry would create a duplicate post.
+
+    Match on the first 80 chars of caption (each post's caption_ig contains a
+    unique number list, so collisions are effectively impossible).
+
+    Returns the matched media dict {id, permalink, timestamp} or None.
+    """
+    prefix = (expected_caption or '').strip()[:80]
+    if not prefix or not cfg.get('ig_user_id'):
+        return None
+    url = f'{GRAPH}/{cfg["ig_user_id"]}/media'
+    params = {
+        'fields': 'id,caption,permalink,timestamp',
+        'limit': lookback,
+        'access_token': cfg['fb_page_token'],
+    }
+    deadline = time.time() + max_wait_s
+    attempt = 0
+    while time.time() < deadline:
+        attempt += 1
+        try:
+            r = requests.get(url, params=params, timeout=15)
+            if r.status_code == 200:
+                for m in r.json().get('data', []):
+                    cap = (m.get('caption') or '').strip()
+                    if cap[:80] == prefix:
+                        logging.info(
+                            f'IG verify-after-error: matched media {m.get("id")} '
+                            f'(attempt {attempt})'
+                        )
+                        return m
+        except Exception as e:
+            logging.warning(f'IG verify probe error: {e}')
+        time.sleep(5)
+    return None
+
+
 def post_instagram(cfg, caption, img_url, video_url=None):
     if video_url:
         # IG REELS: create REELS container -> poll status -> publish.
@@ -644,9 +685,27 @@ def main():
             else:
                 code = r.status_code if r is not None else 'no response'
                 text = r.text[:200] if r is not None else ''
-                logging.error(f'IG FAIL: {post["id"]} {code} {text}')
-                print(f'IG failed: {post["id"]}', file=sys.stderr)
-                failures.append(f'IG HTTP {code}: {text[:140]}')
+                # Meta API quirk: 403 / rate-limit responses sometimes fire on
+                # a call that actually published. Verify against /media before
+                # treating as failure — otherwise the retry creates a duplicate.
+                # (See ERROR_LOG 2026-05-28 for the upn-172 incident.)
+                verified = verify_ig_publish_after_error(cfg, post.get('caption_ig'))
+                if verified:
+                    post['posted_ig'] = True
+                    post['posted_ig_date'] = today
+                    post['ig_media_id'] = verified.get('id')
+                    post['ig_permalink'] = verified.get('permalink')
+                    post['ig_posted_at_iso'] = verified.get('timestamp')
+                    post['_ig_publish_quirk'] = f'HTTP {code} but post went live'
+                    logging.info(
+                        f'IG OK (verified after HTTP {code}): {post["id"]} '
+                        f'ig_media_id={verified.get("id")}'
+                    )
+                    print(f'IG posted (verified after error): {post["id"]}')
+                else:
+                    logging.error(f'IG FAIL: {post["id"]} {code} {text}')
+                    print(f'IG failed: {post["id"]}', file=sys.stderr)
+                    failures.append(f'IG HTTP {code}: {text[:140]}')
 
     fb_done = ('facebook' not in platforms) or post.get('posted_fb')
     # IG considered "done" if not requested, already posted, OR not configured
