@@ -1034,6 +1034,36 @@ a { color: inherit; }
   .cat-tab { padding: 0.7rem 0.9rem; font-size: 0.85rem; }
   .number-display { font-size: 1.2rem; }
 }
+
+/* ============================================================
+   CHOOSE-NUMBER — numbers-first layout (2026-06-14)
+   Pull search + the numbers grid near the top; collapse the tier
+   legend into a native <details> accordion. Pure CSS (flex order +
+   <details>) — no JS, no DOM reorder.
+   ============================================================ */
+.search-section > .container { display: flex; flex-direction: column; }
+.search-section .search-controls { order: 1; }
+.search-section .tier-legend-acc { order: 2; }
+.search-section .results-header,
+.search-section .loading-container,
+.search-section #errorState,
+.search-section #emptyState,
+.search-section .numbers-grid { order: 3; }
+.search-section .mid-cta { order: 4; }
+.tier-legend-acc { margin-bottom: 1.5rem; border: 1px solid var(--surface-border);
+  border-radius: 10px; background: var(--surface); overflow: hidden; }
+.tier-legend-acc > summary { list-style: none; cursor: pointer; display: flex;
+  align-items: center; gap: 0.5rem; padding: 0.85rem 1.1rem; font-weight: 600;
+  color: var(--gold); font-size: 0.95rem; }
+.tier-legend-acc > summary::-webkit-details-marker { display: none; }
+.tier-legend-acc .tier-acc-meta { color: var(--text-muted); font-weight: 400;
+  font-size: 0.82rem; margin-left: auto; }
+.tier-legend-acc .tier-acc-chev { color: var(--text-muted); font-size: 0.85rem;
+  transition: transform 0.2s; }
+.tier-legend-acc[open] .tier-acc-chev { transform: rotate(90deg); }
+.tier-legend-acc[open] > summary { border-bottom: 1px solid var(--surface-border); }
+.tier-legend-acc .tier-legend { margin: 0; padding: 1rem; }
+@media (max-width: 600px) { .tier-legend-acc .tier-acc-meta { display: none; } }
 </style>
   <link rel="stylesheet" href="/assets/premium.css">
   <script src="/assets/premium.js" defer></script>
@@ -1079,7 +1109,9 @@ a { color: inherit; }
 <section class="search-section">
   <div class="container">
 
-    <!-- Tier Legend -->
+    <!-- Tier Legend (collapsed accordion so search + numbers sit near the top) -->
+    <details class="tier-legend-acc">
+      <summary><span class="tier-acc-title">Plan tiers &amp; pricing</span><span class="tier-acc-meta">Silver &amp; Gold &middot; from AED&nbsp;188/mo</span><span class="tier-acc-chev" aria-hidden="true">&#9656;</span></summary>
     <div class="tier-legend">
       <div class="tier-item">
         <div class="tier-icon silver-icon">
@@ -1102,6 +1134,7 @@ a { color: inherit; }
         </div>
       </div>
     </div>
+    </details>
 
     <!-- Search Controls -->
     <div class="search-controls">
