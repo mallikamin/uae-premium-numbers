@@ -146,7 +146,8 @@ footer a{color:var(--text-muted)}footer a:hover{color:var(--gold)}
     <div class="nav-links">
       <a href="/">Home</a>
       <a href="/#plans">Plans</a>
-      <a href="/choose-number/">VIP Numbers</a>
+      <a href="/choose-number/">Postpaid Listings</a>
+      <a href="/prepaid-numbers-for-sale/">Prepaid Listings</a>
       <a href="/sell-your-number/">Sell a Number</a>
       <a href="/blog/">Blog</a>
     </div>
@@ -159,7 +160,7 @@ footer a{color:var(--text-muted)}footer a:hover{color:var(--gold)}
     <p class="lead">Got a memorable Etisalat (e&amp;) or du prepaid number you no longer need? List it with us free in under a minute. We verify the buyers, handle the negotiation and complete the sale — your contact details stay private until we connect you with a serious buyer.</p>
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
       <a href="#sell-form" class="btn btn-gold">Sell my number →</a>
-      <a href="#listings" class="btn btn-outline">Browse numbers for sale</a>
+      <a href="/prepaid-numbers-for-sale/" class="btn btn-outline">Browse numbers for sale</a>
     </div>
   </div>
 </section>
@@ -190,31 +191,22 @@ footer a{color:var(--text-muted)}footer a:hover{color:var(--gold)}
           <p style="font-size:.76rem;text-align:center;margin:.8rem 0 0">By listing you agree we may contact you about the sale. We never share your contact details publicly.</p>
         </form>
         <div class="success-panel" id="sellSuccess">
-          <h3>✅ Listing received</h3>
-          <p>Tap below to send your listing confirmation on WhatsApp so our team can verify it and start finding buyers.</p>
+          <h3>✅ Listing received — under review</h3>
+          <p>Thanks! Your number is now with our team for review. Once we verify and approve it, it appears (masked) on our public <a href="/prepaid-numbers-for-sale/" style="color:var(--gold)">Prepaid Listings</a> page. Tap below to confirm on WhatsApp so we can value it and start finding buyers.</p>
           <a href="#" id="sellWaBtn" class="btn btn-wa btn-lg" target="_blank" rel="noopener noreferrer" data-no-autolead>Confirm on WhatsApp</a>
-          <div class="trust-chips"><span>🔒 Contact kept private</span><span>✓ We verify buyers</span></div>
+          <div class="trust-chips"><span>🔒 Contact kept private</span><span>✓ We verify buyers</span><span>👀 Admin review before public</span></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section>
+<section class="cta-section">
   <div class="container">
-    <div class="props">
-      <div class="card"><div class="ico">💸</div><h3>Get the best price</h3><p>VIP, gold and fancy patterns command a premium. We know the market and find the right buyer.</p></div>
-      <div class="card"><div class="ico">🛡️</div><h3>Safe &amp; private</h3><p>Your number is shown masked; your name and contact stay private until we verify a serious buyer.</p></div>
-      <div class="card"><div class="ico">🤝</div><h3>We handle everything</h3><p>No spam, no time-wasters. We screen and negotiate with buyers, then connect you to close.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="listings">
-  <div class="container">
-    <h2>Prepaid numbers for sale</h2>
-    <p>Numbers currently listed by sellers (shown masked). See one you like? Register interest and we'll handle the rest.</p>
-    <div id="listingsGrid" class="listings-grid"><div class="gallery-state" id="listingsState">Loading listings…</div></div>
+    <h2>Have a number to sell? List it free.</h2>
+    <p>List your Etisalat or du prepaid number above, or message a live specialist and we'll value it for you — no obligation.</p>
+    <br>
+    <a href="https://wa.me/971569028087?text=Hi%2C%20I%27d%20like%20to%20sell%20my%20prepaid%20number." class="btn btn-gold btn-lg" target="_blank" rel="noopener noreferrer">Talk to a LIVE specialist now</a>
   </div>
 </section>
 
@@ -229,34 +221,13 @@ footer a{color:var(--text-muted)}footer a:hover{color:var(--gold)}
   </div>
 </section>
 
-<div class="modal-overlay" id="buyModal">
-  <div class="modal-box">
-    <button class="modal-close" id="buyClose" aria-label="Close">&times;</button>
-    <h3 style="margin:0 0 .3rem">Register interest</h3>
-    <p style="margin:.2rem 0 1rem">You're interested in <strong id="buyNumLabel">—</strong> <span id="buyPriceLabel"></span>. Leave your details and we'll verify the listing and get back to you. Your offer is kept private.</p>
-    <form id="buyForm" novalidate autocomplete="on">
-      <div class="field"><label for="buyName">Your name <span class="req">*</span></label><input type="text" id="buyName" maxlength="60" placeholder="Your name" required></div>
-      <div class="field"><label for="buyPhone">Contact number <span class="req">*</span></label><input type="tel" id="buyPhone" maxlength="17" placeholder="05x xxx xxxx" required></div>
-      <div class="field"><label for="buyOffer">Your offer (AED)</label><input type="number" id="buyOffer" min="0" max="1000000" step="1" placeholder="Optional"></div>
-      <div class="co-hp"><label>Company<input type="text" id="buyCompany" tabindex="-1" autocomplete="off"></label></div>
-      <div class="ts-box"><div id="buyTurnstile"></div></div>
-      <div class="form-err" id="buyErr"></div>
-      <button type="submit" class="btn btn-gold btn-lg btn-block" id="buySubmit">Register my interest</button>
-    </form>
-    <div class="success-panel" id="buySuccess">
-      <h3>✅ Interest registered</h3>
-      <p>Tap below to message us on WhatsApp and we'll verify the listing and follow up.</p>
-      <a href="#" id="buyWaBtn" class="btn btn-wa btn-lg" target="_blank" rel="noopener noreferrer" data-no-autolead>Continue on WhatsApp</a>
-    </div>
-  </div>
-</div>
-
-<section class="cta-section">
+<section>
   <div class="container">
-    <h2>Have a number to sell? List it free.</h2>
-    <p>List your Etisalat or du prepaid number above, or message a live specialist and we'll value it for you — no obligation.</p>
-    <br>
-    <a href="https://wa.me/971569028087?text=Hi%2C%20I%27d%20like%20to%20sell%20my%20prepaid%20number." class="btn btn-gold btn-lg" target="_blank" rel="noopener noreferrer">Talk to a specialist</a>
+    <div class="props">
+      <div class="card"><div class="ico">💸</div><h3>Get the best price</h3><p>VIP, gold and fancy patterns command a premium. We know the market and find the right buyer.</p></div>
+      <div class="card"><div class="ico">🛡️</div><h3>Safe &amp; private</h3><p>Your number is shown masked; your name and contact stay private until we verify a serious buyer.</p></div>
+      <div class="card"><div class="ico">🤝</div><h3>We handle everything</h3><p>No spam, no time-wasters. We screen and negotiate with buyers, then connect you to close.</p></div>
+    </div>
   </div>
 </section>
 
@@ -265,7 +236,8 @@ footer a{color:var(--text-muted)}footer a:hover{color:var(--gold)}
     <div class="footer-links">
       <a href="/">Home</a>
       <a href="/#plans">All Plans</a>
-      <a href="/choose-number/">VIP Numbers</a>
+      <a href="/choose-number/">Postpaid Listings</a>
+      <a href="/prepaid-numbers-for-sale/">Prepaid Listings</a>
       <a href="/sell-your-number/">Sell a Number</a>
       <a href="/blog/">Blog</a>
       <a href="/privacy/">Privacy</a>
@@ -341,7 +313,7 @@ footer a{color:var(--text-muted)}footer a:hover{color:var(--gold)}
     if(priceRaw!==''&&(isNaN(price)||price<0))return showErr(sErr,'Asking price must be a number, or leave it blank.');
     var token=createLeadToken();
     var tok=tsToken('seller');
-    if(!tok&&!TS.seller.failed&&TS.seller.id!==null)return showErr(sErr,'Please complete the verification box above.');
+    // Turnstile is best-effort: send the token when present, but never block the confirmation.
     try{gtag('event','generate_lead',{currency:'AED',value:price||0,lead_source:'sell_number',operator:op,event_id:token});}catch(x){}
     try{fbq('track','Lead',{content_name:'Prepaid Listing',content_category:'sell_number',value:price||0,currency:'AED'},{eventID:token});}catch(x){}
     var payload={name:name,phone:phone,alt_phone:alt,email:email,for_sale_number:num,operator:op,asking_price:(price===null?'':price),token:token,ref:buildRefCode('SELL',token),source_site:SITE,company:document.getElementById('sellCompany').value||''};
@@ -349,61 +321,10 @@ footer a{color:var(--text-muted)}footer a:hover{color:var(--gold)}
     try{fetch(CRM_API+'/api/prepaid-listing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true}).catch(function(){});}catch(e){}
     var waMsg='📲 New Prepaid Number Listing — '+SITE+'\n\nNumber for sale: '+num+'\nOperator: '+(op==='du'?'du':'Etisalat (e&)')+'\nAsking price: '+(price!==null?('AED '+price):'best offer')+'\nSeller: '+name+'\nContact: '+phone+(alt?('\nAlt contact: '+alt):'')+(email?('\nEmail: '+email):'');
     document.getElementById('sellWaBtn').setAttribute('href',waHref(waMsg,'SELL',token));
-    sForm.style.display='none';document.getElementById('sellSuccess').classList.add('open');tsReset('seller');
+    sForm.style.display='none';var sp=document.getElementById('sellSuccess');sp.classList.add('open');try{sp.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}tsReset('seller');
   });
 
-  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  var grid=document.getElementById('listingsGrid');
-  function opLabel(o){return o==='du'?'du':(o==='etisalat'?'Etisalat (e&)':'');}
-  function renderListings(list){
-    if(!list||!list.length){grid.innerHTML='<div class="gallery-state">No numbers listed yet — <a href="#sell-form">be the first to list one</a>. New listings appear here once verified.</div>';return;}
-    grid.innerHTML=list.map(function(r){
-      var price=(r.asking_price!=null)?('AED '+r.asking_price):'Best offer';
-      return '<div class="listing-card"><div class="listing-num">'+esc(r.masked_number||'•••••')+'</div>'
-        +(r.operator?'<span class="listing-op">'+esc(opLabel(r.operator))+'</span>':'')
-        +'<div class="listing-price">'+esc(price)+'</div><div class="listing-meta">Listed '+esc(r.listed_at||'')+'</div>'
-        +'<button class="btn btn-gold buy-btn" data-id="'+esc(r.id)+'" data-num="'+esc(r.masked_number||'')+'" data-op="'+esc(r.operator||'')+'" data-price="'+(r.asking_price!=null?esc(r.asking_price):'')+'">I\'m interested</button></div>';
-    }).join('');
-  }
-  function loadListings(){fetch(CRM_API+'/api/prepaid-listings').then(function(r){return r.json();}).then(function(d){renderListings((d&&d.listings)||[]);}).catch(function(){grid.innerHTML='<div class="gallery-state">Couldn\'t load listings right now. <a href="https://wa.me/'+WA_NUMBER+'?text=Hi%2C%20I%27m%20looking%20to%20buy%20a%20prepaid%20number." target="_blank" rel="noopener">Message us on WhatsApp</a>.</div>';});}
-  loadListings();
-
-  var buyModal=document.getElementById('buyModal'),buyForm=document.getElementById('buyForm'),buyErr=document.getElementById('buyErr');
-  var BUYCTX={id:null,num:'',op:'',price:''};
-  grid.addEventListener('click',function(e){var btn=e.target.closest('.buy-btn');if(!btn)return;
-    BUYCTX={id:btn.dataset.id||null,num:btn.dataset.num||'',op:btn.dataset.op||'',price:btn.dataset.price||''};
-    document.getElementById('buyNumLabel').textContent=BUYCTX.num||'this number';
-    document.getElementById('buyPriceLabel').textContent=BUYCTX.price?('(listed at AED '+BUYCTX.price+')'):'';
-    buyForm.style.display='';document.getElementById('buySuccess').classList.remove('open');hideErr(buyErr);
-    buyModal.classList.add('open');renderTs('buyer','buyTurnstile');tsReset('buyer');
-    try{gtag('event','select_item',{item_id:BUYCTX.id,item_category:'prepaid_listing'});}catch(x){}
-  });
-  function closeBuy(){buyModal.classList.remove('open');}
-  document.getElementById('buyClose').addEventListener('click',closeBuy);
-  buyModal.addEventListener('click',function(e){if(e.target===buyModal)closeBuy();});
-
-  buyForm.addEventListener('submit',function(ev){
-    ev.preventDefault();hideErr(buyErr);
-    var name=document.getElementById('buyName').value.trim().replace(/\s+/g,' ');
-    var phone=normPhone(document.getElementById('buyPhone').value);
-    var offRaw=document.getElementById('buyOffer').value.trim();
-    var offer=offRaw===''?null:parseInt(offRaw,10);
-    if(name.length<2)return showErr(buyErr,'Please enter your name.');
-    if(!phone)return showErr(buyErr,'Please enter a valid UAE mobile (05x xxx xxxx).');
-    if(offRaw!==''&&(isNaN(offer)||offer<0))return showErr(buyErr,'Offer must be a number, or leave it blank.');
-    var token=createLeadToken();
-    var tok=tsToken('buyer');
-    if(!tok&&!TS.buyer.failed&&TS.buyer.id!==null)return showErr(buyErr,'Please complete the verification box.');
-    var val=offer||(BUYCTX.price?parseInt(BUYCTX.price,10):0)||0;
-    try{gtag('event','generate_lead',{currency:'AED',value:val,lead_source:'buy_number',event_id:token});}catch(x){}
-    try{fbq('track','Lead',{content_name:'Prepaid Buyer Interest',content_category:'buy_number',value:val,currency:'AED'},{eventID:token});}catch(x){}
-    var payload={name:name,phone:phone,city:'',listing_id:(BUYCTX.id?parseInt(BUYCTX.id,10):''),masked_number:BUYCTX.num,offered_price:(offer===null?'':offer),token:token,ref:buildRefCode('BUYNUM',token),source_site:SITE,company:document.getElementById('buyCompany').value||''};
-    if(tok)payload.ts_token=tok;
-    try{fetch(CRM_API+'/api/prepaid-interest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true}).catch(function(){});}catch(e){}
-    var waMsg='🔎 Buyer interest — '+SITE+'\n\nInterested in: '+(BUYCTX.num||'a listed number')+(BUYCTX.op?(' ('+opLabel(BUYCTX.op)+')'):'')+(BUYCTX.price?('\nListed price: AED '+BUYCTX.price):'')+(offer!==null?('\nMy offer: AED '+offer):'')+'\nName: '+name+'\nContact: '+phone;
-    document.getElementById('buyWaBtn').setAttribute('href',waHref(waMsg,'BUYNUM',token));
-    buyForm.style.display='none';document.getElementById('buySuccess').classList.add('open');tsReset('buyer');
-  });
+  // (Buyer gallery + interest flow moved to /prepaid-numbers-for-sale/.)
 })();
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad" async defer></script>
