@@ -26,11 +26,10 @@ from pathlib import Path
 # To swap inventory sources without a code change or sync.sh, just edit
 # sheets.json on loom-edge — the next cron run picks it up automatically.
 _DEFAULT_SHEETS = [
-    # Primary inventory sheet
-    "1qAw1YQkKEbq-R3LullCBNr0MweGfC2KEO-rot9ff8dw",
-    # Probiz secondary inventory (Gold/Platinum, allocation-tracked).
-    # Confirmed canonical 2026-05-15 — superseded the older stale 1XQ4qvJNb...
-    "1Lmfsc-0H0R0hXv0wddktRwisHI74yu9JfrtxPajm9hk",
+    # 2026-06-17: consolidated master sheet (single source). Superseded the dead
+    # 1qAw… (now 404) + the empty 1Lmfsc… secondary. Real source of truth at
+    # runtime is sheets.json next to this file; this is the last-resort fallback.
+    "1YVzDy7ZE5yQ8e46yiPciPYYMyIk2Dog6pUH8GRsABPA",
 ]
 _DEFAULT_GID = "0"
 
