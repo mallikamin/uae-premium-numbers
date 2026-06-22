@@ -1043,13 +1043,19 @@ a { color: inherit; }
    ============================================================ */
 .search-section > .container { display: flex; flex-direction: column; }
 .search-section .search-controls { order: 1; }
-.search-section .tier-legend-acc { order: 2; }
 .search-section .results-header,
 .search-section .loading-container,
 .search-section #errorState,
 .search-section #emptyState,
-.search-section .numbers-grid { order: 3; }
-.search-section .mid-cta { order: 4; }
+.search-section .numbers-grid { order: 2; }
+.search-section .mid-cta { order: 3; }
+/* Supporting content below the grid so the picker is what lands (2026-06-23) */
+.search-section .tier-legend-acc { order: 4; }
+/* Slim hero so the search picker is the lead action */
+.hero { padding-bottom: 1rem; }
+.hero .hero-cta-row { margin-top: 1rem; }
+.hero .hero-cta-row .hero-cta-wa,
+.hero .hero-cta-row .hero-cta-call { padding: 0.55rem 1.15rem; font-size: 0.9rem; box-shadow: none; }
 .tier-legend-acc { margin-bottom: 1.5rem; border: 1px solid var(--surface-border);
   border-radius: 10px; background: var(--surface); overflow: hidden; }
 .tier-legend-acc > summary { list-style: none; cursor: pointer; display: flex;
