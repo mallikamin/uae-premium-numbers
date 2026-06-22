@@ -1262,6 +1262,39 @@ var PARTNER_API = 'https://script.google.com/macros/s/AKfycbyH1KBC63S7yB3wSpHw-s
 var allNumbers = [];
 var filteredNumbers = [];
 var activeCategory = 'all';
+// Fisher-Yates shuffle (used per-tier below).
+function shuffleInPlace(arr) {
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+// Round-robin across tiers (Silver → Platinum), each tier's pool shuffled, so the default
+// "All Numbers" view shows a varied MIX of tiers — not one category block. Random per load. (Malik 2026-06-23)
+function interleaveByTier(arr) {
+  var order = ['Silver', 'Silver Plus', 'Gold', 'Platinum'];
+  var groups = {};
+  for (var i = 0; i < arr.length; i++) {
+    var c = arr[i].category || 'Silver';
+    (groups[c] = groups[c] || []).push(arr[i]);
+  }
+  var rot = [];
+  for (var o = 0; o < order.length; o++) if (groups[order[o]] && groups[order[o]].length) rot.push(order[o]);
+  for (var key in groups) if (groups.hasOwnProperty(key) && rot.indexOf(key) === -1) rot.push(key);
+  for (var r = 0; r < rot.length; r++) shuffleInPlace(groups[rot[r]]);
+  var out = [], pos = {};
+  for (var r2 = 0; r2 < rot.length; r2++) pos[rot[r2]] = 0;
+  while (out.length < arr.length) {
+    var pushed = false;
+    for (var r3 = 0; r3 < rot.length; r3++) {
+      var t = rot[r3], g = groups[t];
+      if (pos[t] < g.length) { out.push(g[pos[t]++]); pushed = true; }
+    }
+    if (!pushed) break;
+  }
+  return out;
+}
 var searchQuery = '';
 var searchPosition = 'anywhere';
 var searchTimer = null;
@@ -1584,7 +1617,7 @@ function loadNumbers() {
           merged.push(n);
         });
       });
-      allNumbers = merged;
+      allNumbers = interleaveByTier(merged);
       if (allNumbers.length === 0) throw new Error('No numbers parsed');
       loadingState.style.display = 'none';
       applyFilters();
