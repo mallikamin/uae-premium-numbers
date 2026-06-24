@@ -11,6 +11,7 @@ except ImportError:
     HAS_FCNTL = False
 
 import notify
+import story as st
 
 # Edge prod default: /opt/meta-poster-upn  (mirrors goldennummbers' /opt/meta-poster)
 # Windows dev: script directory  (so a local config.json next to this file is found)
@@ -28,6 +29,11 @@ RUN_LOCK  = f'{BASE_DIR}/meta_poster.lock'
 LAST_POST_FILE = f'{BASE_DIR}/last_post.json'
 
 BRAND_TAG = '[uaepremiumnumbers]'  # email subject prefix
+
+# Per-post success emails are OFF (Malik, 2026-06-24): a dedicated task
+# health-monitor replaces the per-post noise. Rare circuit-breaker/halt and
+# per-post failure alerts stay on as a safety net. Flip to '1' to restore.
+EMAIL_ON_POST_SUCCESS = os.environ.get('META_POSTER_EMAIL_ON_SUCCESS', '0') == '1'
 
 os.makedirs(f'{BASE_DIR}/logs', exist_ok=True)
 os.makedirs(APPROVED, exist_ok=True)
@@ -567,6 +573,33 @@ def email_post_failure(post, fail_summary, retry_at):
         body,
     )
 
+def _maybe_post_stories(cfg, post):
+    """Best-effort FB + IG Stories for a post that just posted to the feed.
+    Stories NEVER roll back or fail the feed post — failures are logged only
+    (the posting task-monitor surfaces persistent story trouble separately).
+    Idempotent: re-running won't double-post a platform already done."""
+    story_url = post.get('story_url')
+    story_path = post.get('story_path')
+    if not story_url and not story_path:
+        return
+    if post.get('posted_story_fb') and post.get('posted_story_ig'):
+        return
+    try:
+        if story_path and not post.get('posted_story_fb'):
+            if os.path.exists(story_path):
+                ok, info = st.post_fb_story(cfg, story_path)
+                post['posted_story_fb'] = bool(ok)
+                (logging.info if ok else logging.warning)(f'FB story {post["id"]}: {ok} {info}')
+            else:
+                logging.warning(f'FB story {post["id"]}: story_path missing ({story_path})')
+        if story_url and not post.get('posted_story_ig'):
+            ok, info = st.post_ig_story(cfg, story_url)
+            post['posted_story_ig'] = bool(ok)
+            (logging.info if ok else logging.warning)(f'IG story {post["id"]}: {ok} {info}')
+    except Exception as e:
+        logging.warning(f'story posting error {post["id"]}: {e}')
+
+
 def main():
     if not os.path.exists(CONFIG):
         print(f'Missing: {CONFIG}')
@@ -723,6 +756,8 @@ def main():
         set_last_post_at(post.get('id', os.path.basename(path)))
 
     if full_success:
+        # Best-effort FB+IG stories alongside the feed post (never rolls it back)
+        _maybe_post_stories(cfg, post)
         # clear retry state, archive, notify success
         post.pop('retry_at', None)
         post.pop('failed_attempts', None)
@@ -730,10 +765,11 @@ def main():
         dest = os.path.join(ARCHIVE, os.path.basename(path))
         shutil.move(path, dest)
         logging.info(f'Archived: {os.path.basename(path)}')
-        try:
-            email_post_success(post)
-        except Exception as e:
-            logging.warning(f'success-email failed: {e}')
+        if EMAIL_ON_POST_SUCCESS:
+            try:
+                email_post_success(post)
+            except Exception as e:
+                logging.warning(f'success-email failed: {e}')
         return
 
     # something failed

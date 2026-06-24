@@ -35,6 +35,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import notify
 from make_card import render_card
 from make_grid_card import render_grid_card, BRAND_VARIANTS
+from make_story_card import render_story, render_grid_story
 from score_numbers import fetch_all_rows, score_number, format_display
 
 # Edge prod default mirrors meta_poster.py's path scheme.
@@ -59,20 +60,31 @@ GN_DEDUP_PATHS = (
 )
 
 CARDS_PUBLIC_BASE = "https://uaepremiumnumbers.com/cards"
-WA_DISPLAY = "+971 56 699 9377"
+# Unified conversion WhatsApp — standard across all brands so every lead lands
+# in one CRM (Malik, 2026-06-24). Matches postpaidplans + make_card.py.
+WA_DISPLAY = "+971 56 902 8087"
 LINK_BASE = "https://uaepremiumnumbers.com/choose-number/"
+
+# Plan details for captions (Malik 2026-06-25: surface data/minutes + the right
+# keywords on every post + story). The AED 188 entry = Etisalat "Freedom Plan 250"
+# (non-stop data + 1,000 local minutes). Source of truth: postpaidplans PLANS[fp250].
+# Tier nuance (postpaidplans 2026-06-04 incident): AED 188 is the PLAN price and
+# includes a free SILVER number — Gold numbers are priced separately, so never
+# let "from AED 188" read as the Gold number's price.
+PLAN_DETAILS = "Non-stop data + 1,000 local minutes"
+PLAN_LABEL = "Etisalat Postpaid Plans"
 ID_PREFIX = "upn"             # post IDs are upn-001, upn-002, ...
 BRAND_NAME = "uae-premium-numbers"
 PAUSE_AFTER_BATCH_LIMIT = 3   # pause+ping for batches 1–3, auto-roll for 4+
-POSTS_PER_DAY = 3             # 2026-05-28: 8→3/day post-IG-action-block resume (gentle volume to avoid re-trip)
-SINGLE_PER_DAY = 1            # UPN keeps its grid-heavy tilt at lower volume
-GRID_PER_DAY = 2              # grids remain the bulk
+POSTS_PER_DAY = 5             # 2026-06-25: 3→5/day (Malik: aim for 4–5 posts/day across FB+IG)
+SINGLE_PER_DAY = 2            # UPN keeps its grid-heavy tilt
+GRID_PER_DAY = 3              # grids remain the bulk
 GRID_NUMBERS_PER_CARD = 6     # each grid shows 6 numbers
 GRID_FROM_PRICE = 188         # AED — matches Probiz, our entry price for Etisalat Post Paid plans
-INTERVAL_MIN = 480            # 24h / 3 = 480 min between slots (8h cadence)
+INTERVAL_MIN = 288            # 24h / 5 = 288 min between slots (~4.8h cadence)
 RUNWAY_HOURS = 12             # runway guard: skip if queue tail >12h ahead
 BATCH_DAYS_AFTER_FIRST = 10   # batch 1 was 1 day; batch 2+ are 10 days
-GOLD_PER_DAY = 1              # of 1 single → 100% Gold
+GOLD_PER_DAY = 1              # of 2 singles → 1 Gold + 1 Silver
 
 # Auto-tuner output — written by creative_analytics/tuner.py (env-var-scoped
 # to UPN via run_analytics.sh). Missing file → defaults above (cold-start).
@@ -247,9 +259,16 @@ def fb_caption(p, human):
 
     prefix_line = f"• {prefix} prefix — {PREFIX_NOTE.get(prefix, 'available now')}"
 
+    plan_line = f"📶 {PLAN_LABEL} — {PLAN_DETAILS}, from AED 188/mo"
+    if tier == "Gold":
+        pair_line = "🎁 Pairs with any Etisalat postpaid plan — this premium Golden Number is priced separately"
+    else:
+        pair_line = "🎁 Plans from AED 188/mo include a FREE Silver number"
+
     return (
         f"{opener}\n\n"
         f"{bullets}\n{prefix_line}\n\n"
+        f"{plan_line}\n{pair_line}\n\n"
         f"{cta}\n"
         f"{link_line}"
     )
@@ -280,7 +299,8 @@ IG_CTAS = [
     "{wa} on WhatsApp — first to call wins.",
 ]
 
-IG_TAGS_CORE = ["#UAEPremiumNumbers", "#EtisalatPostpaid", "#UAE"]
+IG_TAGS_CORE = ["#UAEPremiumNumbers", "#GoldenNumbers", "#EtisalatPostpaid",
+                "#EtisalatPostpaidPlans", "#UAE"]
 IG_TAGS_GEO = [
     "#Dubai", "#AbuDhabi", "#Sharjah", "#Ajman", "#RAK",
     "#UAELife", "#DubaiLife", "#MyDubai", "#AbuDhabiLife",
@@ -349,9 +369,10 @@ GRID_IG_OPENERS = [
 ]
 
 GRID_IG_HASHTAGS = (
-    "#UAEPremiumNumbers #EtisalatPlans #EtisalatPostpaid #PremiumNumber "
-    "#PostpaidPlan #VIPNumber #UAE #Dubai #AbuDhabi #Sharjah #Ajman "
-    "#UAENumbers #MobileNumber #VanityNumber #Etisalat #etisalatuae"
+    "#UAEPremiumNumbers #GoldenNumbers #EtisalatPlans #EtisalatPostpaid "
+    "#EtisalatPostpaidPlans #PremiumNumber #PostpaidPlan #VIPNumber #UAE "
+    "#Dubai #AbuDhabi #Sharjah #Ajman #UAENumbers #MobileNumber "
+    "#VanityNumber #Etisalat #etisalatuae"
 )
 
 
@@ -364,10 +385,10 @@ def grid_caption_fb(grid_id: str, numbers_display: list[str], brand_variant: str
     return (
         f"{opener}\n\n"
         f"{number_lines}\n\n"
-        f"✓ Post Paid Plans Available\n"
-        f"✓ Premium ETISALAT Numbers — Hand-picked\n"
+        f"✓ {PLAN_LABEL} — {PLAN_DETAILS}, from AED {GRID_FROM_PRICE}/mo\n"
+        f"✓ Premium ETISALAT Numbers / Golden Numbers — Hand-picked\n"
         f"✓ Free UAE Delivery — Instant Activation\n"
-        f"✓ Starting from {GRID_FROM_PRICE} AED\n\n"
+        f"✓ Plans from AED {GRID_FROM_PRICE} include a free Silver number (Gold priced separately)\n\n"
         f"{cta}\n"
         f"uaepremiumnumbers.com"
     )
@@ -381,10 +402,10 @@ def grid_caption_ig(grid_id: str, numbers_display: list[str], brand_variant: str
     number_lines = "\n".join(f"• {n}" for n in numbers_display[:8])
     return (
         f"{opener}\n"
-        f"Post Paid Plans · Starting from {GRID_FROM_PRICE} AED\n\n"
+        f"{PLAN_LABEL} · {PLAN_DETAILS} · from AED {GRID_FROM_PRICE}/mo\n\n"
         f"{number_lines}\n\n"
-        f"✓ Premium ETISALAT Numbers\n"
-        f"✓ Free UAE Delivery\n\n"
+        f"✓ Premium ETISALAT Numbers / Golden Numbers\n"
+        f"✓ Free UAE Delivery · Instant Activation\n\n"
         f"{cta}\n\n"
         f"{GRID_IG_HASHTAGS}"
     )
@@ -426,7 +447,8 @@ def pick_brand_variants_for_day(count: int, seed_str: str,
 
 
 def build_grid_post_json(post_id: str, digits_list: list[str], brand_variant: str,
-                          sched_at_iso: str, image_url: str) -> dict:
+                          sched_at_iso: str, image_url: str,
+                          story_url: str = "", story_path: str = "") -> dict:
     """JSON envelope for a grid post — mirrors build_post_json structure but
     carries digits_list + brand_variant + type='grid' for downstream identification."""
     numbers_display = [format_display(d) for d in digits_list]
@@ -440,6 +462,8 @@ def build_grid_post_json(post_id: str, digits_list: list[str], brand_variant: st
         "caption_fb": grid_caption_fb(post_id, numbers_display, brand_variant),
         "caption_ig": grid_caption_ig(post_id, numbers_display, brand_variant),
         "image_url": image_url,
+        "story_url": story_url,    # CDN url of the 9:16 story card (IG story)
+        "story_path": story_path,  # local file of the story card (FB story upload)
         "link": LINK_BASE,
         "status": "approved",
         "digits_list": digits_list,
@@ -467,7 +491,11 @@ def ig_caption(p, human):
     cta = _pick(IG_CTAS, digits, 12).format(wa=WA_DISPLAY)
     tags = _build_ig_hashtags(digits)
 
-    return f"{opener}\n{medal} {hook}\n\n{cta}\n\n{tags}"
+    plan_line = f"📶 {PLAN_LABEL} — {PLAN_DETAILS}, from AED 188/mo"
+    pair_line = ("🎁 Golden Number priced separately" if tier == "Gold"
+                 else "🎁 Free Silver number with plans from AED 188/mo")
+
+    return f"{opener}\n{medal} {hook}\n{plan_line}\n{pair_line}\n\n{cta}\n\n{tags}"
 
 
 # --------- showcase pick: stratified random within each tier ---------
@@ -740,7 +768,8 @@ def _avoid_gn_collisions(slots, gn_slots, min_gap_min=30, interval_min=100):
     return out
 
 
-def build_post_json(post_id, p, sched_at_iso, image_url, link, human):
+def build_post_json(post_id, p, sched_at_iso, image_url, link, human,
+                    story_url="", story_path=""):
     return {
         "id": post_id,
         "brand": "uae-premium-numbers",
@@ -750,6 +779,8 @@ def build_post_json(post_id, p, sched_at_iso, image_url, link, human):
         "caption_fb": fb_caption(p, human),
         "caption_ig": ig_caption(p, human),
         "image_url": image_url,
+        "story_url": story_url,    # CDN url of the 9:16 story card (IG story)
+        "story_path": story_path,  # local file of the story card (FB story upload)
         "link": link,
         "status": "approved",
         "tier": p["category"],
@@ -885,9 +916,13 @@ def main(force=False):
     if total_picked < POSTS_PER_DAY:
         logging.warning(f"Only {total_picked} total picks (wanted {POSTS_PER_DAY}).")
 
-    # Step 3a: render single cards into site_repo/cards/YYYY-MM/
+    # Step 3a: render single feed cards + 9:16 story cards
+    story_dir_fs = os.path.join(month_dir_fs, "stories")
+    os.makedirs(story_dir_fs, exist_ok=True)
     for p in singles:
         write_card(p["digits"], p["category"], month_dir_fs)
+        render_story(p["digits"], p["category"],
+                     os.path.join(story_dir_fs, f'{p["digits"]}.jpg'))
 
     # Pre-allocate post IDs: singles get [next_post_id .. +SINGLE_PER_DAY),
     # grids get the contiguous block immediately after.
@@ -910,6 +945,9 @@ def main(force=False):
             from_price=GRID_FROM_PRICE,
             out_path=grid_out_path,
         )
+        render_grid_story(digits_list,
+                          os.path.join(story_dir_fs, grid_filename),
+                          brand_variant=brand_variant, from_price=GRID_FROM_PRICE)
         grid_payloads.append((grid_post_id, digits_list, brand_variant, grid_filename))
 
     push_cards(month_dir_fs, count=total_picked)
@@ -936,14 +974,20 @@ def main(force=False):
             human = humanize_reasons(payload["reasons"])
             digits = payload["digits"]
             image_url = f"{CARDS_PUBLIC_BASE}/{month_subdir}/{digits}.jpg"
+            story_url = f"{CARDS_PUBLIC_BASE}/{month_subdir}/stories/{digits}.jpg"
+            story_path = os.path.join(story_dir_fs, f"{digits}.jpg")
             link = f"{LINK_BASE}?n={digits}"
-            post = build_post_json(post_id, payload, sched_at, image_url, link, human)
+            post = build_post_json(post_id, payload, sched_at, image_url, link, human,
+                                   story_url=story_url, story_path=story_path)
             label = payload["display"]
             tier = payload["category"]
         else:
             _, digits_list, brand_variant, grid_filename = payload
             image_url = f"{CARDS_PUBLIC_BASE}/{month_subdir}/grids/{grid_filename}"
-            post = build_grid_post_json(post_id, digits_list, brand_variant, sched_at, image_url)
+            story_url = f"{CARDS_PUBLIC_BASE}/{month_subdir}/stories/{grid_filename}"
+            story_path = os.path.join(story_dir_fs, grid_filename)
+            post = build_grid_post_json(post_id, digits_list, brand_variant, sched_at, image_url,
+                                        story_url=story_url, story_path=story_path)
             label = f"GRID[{brand_variant}] · {len(digits_list)} numbers"
             tier = "Grid"
 

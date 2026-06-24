@@ -19,6 +19,10 @@ import qrcode
 
 W = H = 1080
 
+# Unified conversion WhatsApp — standard across all brands so every lead lands
+# in one CRM (Malik, 2026-06-24). Matches postpaidplans' WA_DISPLAY.
+WA_DISPLAY = "+971 56 902 8087"
+
 # Palette — Etisalat red on white. Mirrors the website theme (#ED1C24)
 # established in the 2026-04 brand pivot (RESUME.md row 4).
 BG = (255, 255, 255)            # pure white
@@ -98,7 +102,7 @@ def draw_bottom_ribbon(draw: ImageDraw.ImageDraw, height: int = 78) -> None:
     draw.text((75, y0 + (height - 26) // 2 - 2),
               "uaepremiumnumbers.com", font=domain_font, fill=WHITE)
     # Right: WhatsApp number
-    wa_text = "WhatsApp +971 56 699 9377"
+    wa_text = f"WhatsApp {WA_DISPLAY}"
     tw, _ = text_size(draw, wa_text, wa_font)
     draw.text((W - 75 - tw, y0 + (height - 22) // 2 - 1),
               wa_text, font=wa_font, fill=WHITE)
@@ -181,7 +185,7 @@ def format_display(digits: str) -> str:
 
 def render_card(digits: str, tier: str, reasons: list[str], out_path: str,
                 site: str = "uaepremiumnumbers.com",
-                wa: str = "+971 56 699 9377",
+                wa: str = WA_DISPLAY,
                 plan_aed: int = 188) -> str:
     img = solid_bg((W, H))
     draw = ImageDraw.Draw(img)

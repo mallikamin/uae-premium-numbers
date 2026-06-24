@@ -55,6 +55,10 @@ GREEN_BADGE = (40, 160, 90)      # kept — green = certified/trust signal
 # Back-compat alias (some older code refs BG_COLOR; the local renderer just uses BG)
 BG_COLOR = BG
 
+# Unified conversion WhatsApp — standard across all brands so every lead lands
+# in one CRM (Malik, 2026-06-24). Matches postpaidplans + make_card.py.
+WA_DISPLAY = "+971 56 902 8087"
+
 FONT_DIRS = [
     r"C:\Windows\Fonts",
     "/usr/share/fonts/truetype/dejavu",
@@ -297,7 +301,7 @@ def render_grid_card(
     brand_variant: str = "uaepremiumnumbers",
     from_price: int = 188,
     subheadline: str | None = None,
-    wa_number: str = "+971 56 699 9377",
+    wa_number: str = WA_DISPLAY,
     cta_text: str = "Order on WhatsApp or Call",
     authority_badge: str = "OFFICIAL ETISALAT CHANNEL PARTNER",
     selling_points: list[str] | None = None,
@@ -379,7 +383,7 @@ def main():
     p.add_argument("--brand-variant", default="uaepremiumnumbers", choices=list(BRAND_VARIANTS))
     p.add_argument("--from-price", type=int, default=188)
     p.add_argument("--subheadline", default=None)
-    p.add_argument("--wa", default="+971 56 699 9377")
+    p.add_argument("--wa", default=WA_DISPLAY)
     p.add_argument("--cta", default="Order on WhatsApp or Call")
     p.add_argument("--out", required=True)
     args = p.parse_args()
