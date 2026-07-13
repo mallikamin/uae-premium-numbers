@@ -26,10 +26,9 @@ from pathlib import Path
 # To swap inventory sources without a code change or sync.sh, just edit
 # sheets.json on loom-edge — the next cron run picks it up automatically.
 _DEFAULT_SHEETS = [
-    # 2026-06-17: consolidated master sheet (single source). Superseded the dead
-    # 1qAw… (now 404) + the empty 1Lmfsc… secondary. Real source of truth at
-    # runtime is sheets.json next to this file; this is the last-resort fallback.
-    "1YVzDy7ZE5yQ8e46yiPciPYYMyIk2Dog6pUH8GRsABPA",
+    # 2026-07-13: master sheet re-issued (old 1YVz emptied). Real source of truth
+    # at runtime is sheets.json next to this file; this is the last-resort fallback.
+    "1CfIRlk55aGLI2nLBuUFH4pvRu5gT6qSo3aIzh2iDeAo",
 ]
 _DEFAULT_GID = "0"
 
@@ -242,14 +241,18 @@ def parse_csv(csv_text: str) -> list[dict]:
         if status != "available":
             continue
         category = (row.get("Category") or "").strip()
-        if category.lower() not in ("gold", "silver"):
+        cl = category.lower()
+        # 2026-06-29: include Platinum too (shared sheet has ~43 available) so UPN's
+        # pattern-class grids can run the proven Silver-led + Gold + Platinum-test mix,
+        # mirroring GN/PPP. Singles still split Gold/Silver only (see pick_showcase).
+        if cl not in ("gold", "silver", "platinum"):
             continue
         with_zero = (row.get("With Zero") or "").strip().replace(" ", "")
         if not with_zero or len(with_zero) < 10:
             continue
         out.append({
             "digits": with_zero,
-            "category": "Gold" if category.lower() == "gold" else "Silver",
+            "category": {"gold": "Gold", "silver": "Silver", "platinum": "Platinum"}[cl],
             "msisdn": (row.get("MSISDN") or "").strip(),
             "code": (row.get("Code") or "").strip(),
         })
