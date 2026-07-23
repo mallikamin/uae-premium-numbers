@@ -14,7 +14,7 @@
     <loc>https://uaepremiumnumbers.com/ar/</loc>
     <xhtml:link rel="alternate" hreflang="ar" href="https://uaepremiumnumbers.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://uaepremiumnumbers.com/"/>
-    <lastmod>2026-05-07</lastmod>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -55,28 +55,70 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- ===== GUIDES HUB (2026-07-24) ===== -->
+  <url>
+    <loc>https://uaepremiumnumbers.com/blog/</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ===== PLAN CONTENT PAGES (2026-07-24 build) ===== -->
+  <url>
+    <loc>https://uaepremiumnumbers.com/postpaid-mobile-plans-uae/</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://uaepremiumnumbers.com/family-mobile-plans-uae/</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://uaepremiumnumbers.com/etisalat-postpaid-sim-requirements/</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://uaepremiumnumbers.com/prepaid-to-postpaid-etisalat/</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
   <!-- ===== eSIM LANDING PAGES (2026-06-16) ===== -->
-  <url><loc>https://uaepremiumnumbers.com/etisalat-esim/</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://uaepremiumnumbers.com/etisalat-postpaid-esim/</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://uaepremiumnumbers.com/uae-esim-number/</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://uaepremiumnumbers.com/premium-esim-numbers/</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://uaepremiumnumbers.com/etisalat-esim/</loc><lastmod>2026-07-24</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://uaepremiumnumbers.com/etisalat-postpaid-esim/</loc><lastmod>2026-07-24</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://uaepremiumnumbers.com/uae-esim-number/</loc><lastmod>2026-07-24</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://uaepremiumnumbers.com/premium-esim-numbers/</loc><lastmod>2026-07-24</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- ===== HOME INTERNET ===== -->
+  <url>
+    <loc>https://uaepremiumnumbers.com/home-wireless/</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
   <!-- ===== AI-SEO QUESTION-URL LANDING PAGES ===== -->
   <url>
     <loc>https://uaepremiumnumbers.com/cheapest-etisalat-postpaid-plan/</loc>
-    <lastmod>2026-05-07</lastmod>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://uaepremiumnumbers.com/best-etisalat-plan-for-family/</loc>
-    <lastmod>2026-05-07</lastmod>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://uaepremiumnumbers.com/etisalat-plans-under-200-aed/</loc>
-    <lastmod>2026-05-07</lastmod>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -84,19 +126,19 @@
   <!-- ===== CITY LANDING PAGES ===== -->
   <url>
     <loc>https://uaepremiumnumbers.com/dubai/</loc>
-    <lastmod>2026-05-07</lastmod>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://uaepremiumnumbers.com/abu-dhabi/</loc>
-    <lastmod>2026-05-07</lastmod>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://uaepremiumnumbers.com/sharjah/</loc>
-    <lastmod>2026-05-07</lastmod>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
