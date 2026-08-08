@@ -6,7 +6,7 @@
 
 - [UAE Premium Numbers, Home](https://uaepremiumnumbers.com/): Compare all 22 Etisalat postpaid plans side-by-side. Free premium mobile number with select plans. Live inventory + WhatsApp inquiry.
 - [Arabic Version, أرقام الإمارات المميزة](https://uaepremiumnumbers.com/ar/): Full Arabic RTL version with all plans and premium numbers.
-- [Browse Premium Numbers (Live)](https://uaepremiumnumbers.com/choose-number/): Browse 2,500+ available premium mobile numbers. Filter by tier (Silver, Gold, Platinum) and prefix (050, 052, 054, 055, 056).
+- [Browse Premium Numbers (Live)](https://uaepremiumnumbers.com/choose-number/): Live inventory of available Etisalat premium numbers, around 1,700 at any time, drawn from the dealer sheet. Search by digit pattern and filter by tier: Silver, Gold, Platinum, and UAE Nationals (Silver Plus, Emirati Freedom 400 plan, restricted to UAE nationals). Every number is included free with a postpaid plan at its tier.
 - [Emirati Freedom Plan](https://uaepremiumnumbers.com/emirati/): Exclusive plan for UAE Nationals with unlimited data and calls.
 
 ## City Pages
@@ -32,6 +32,19 @@
 - [Transfer an Etisalat Number to Another Person](https://uaepremiumnumbers.com/etisalat-number-transfer-ownership/): Moving a mobile subscription into someone else's name in the UAE. Under the TDRA mobile registration policy operators SHALL allow the transfer once five conditions are met: written request from the current holder and written consent from the new holder, request made during the subscription period, the new holder successfully registered, policy obligations satisfied, and the operator's own transfer rules satisfied. Distinct from porting, which changes network rather than owner.
 - [Etisalat SIM Suspended, the Three Month Clock](https://uaepremiumnumbers.com/etisalat-sim-suspended-reactivate/): SIM registration expires with the residence visa or passport, whichever comes sooner. Operator must warn at least one calendar month before expiry, then suspend with notice within 24 hours. A suspended line can still receive calls and SMS. Three months after suspension the operator deactivates it, and is then entitled to reuse the number and under no obligation to reissue it. Registration renewal carries no charge.
 - [How Many SIMs on One Emirates ID](https://uaepremiumnumbers.com/how-many-sims-emirates-id/): The cap is per operator, not national, and the TDRA policy does not publish the figure, it is set by the Authority from time to time. Do not quote a hard number. Every number registered to an Emirates ID can be checked free via TDRA's Hesabati service using UAE Pass, and operators must separately provide a free confidential service listing SIMs registered to you.
+## Numbers, Buying and Selling
+
+- [Buy a VIP Number in the UAE](https://uaepremiumnumbers.com/buy-vip-number/): How buying an Etisalat VIP number works: the Silver, Gold and Platinum tiers, how pricing follows the paired postpaid plan, reservation, and same-day delivery.
+- [Prepaid Numbers for Sale](https://uaepremiumnumbers.com/prepaid-numbers-for-sale/): Etisalat and du prepaid numbers listed for sale by their current owners. Full number, operator and asking price shown; the sale is verified and brokered rather than peer to peer.
+- [Sell Your Number](https://uaepremiumnumbers.com/sell-your-number/): List an Etisalat or du prepaid number for sale free. Buyers are verified, the sale is brokered, and the seller contact stays private until a price is agreed. Ownership moves by the regulated transfer described in the number-transfer guide.
+
+## eSIM
+
+- [Etisalat eSIM in the UAE](https://uaepremiumnumbers.com/etisalat-esim/): Getting an Etisalat plan and number onto an eSIM instead of a physical SIM, including converting an existing physical SIM in the e& UAE app.
+- [Postpaid Plans on eSIM](https://uaepremiumnumbers.com/etisalat-postpaid-esim/): All 22 Etisalat postpaid plans, AED 188 to AED 1,000 a month, delivered as an eSIM with the free VIP number tier attached to each plan.
+- [New UAE Number on eSIM](https://uaepremiumnumbers.com/uae-esim-number/): Taking a brand new UAE mobile number as an eSIM, activated in the e& UAE app with no physical SIM. Aimed at new residents.
+- [Premium Numbers on eSIM](https://uaepremiumnumbers.com/premium-esim-numbers/): Taking a Silver, Gold or Platinum premium number on an eSIM rather than a plastic SIM.
+
 ## Home Internet
 
 - [Etisalat 5G Home Internet](https://uaepremiumnumbers.com/home-wireless/): Home wireless plans in the UAE and bundling one with a premium mobile number.
