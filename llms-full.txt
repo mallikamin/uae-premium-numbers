@@ -44,7 +44,7 @@
 ### Silver Numbers (Free with most plans)
 - Basic repeating or pattern sequences (e.g., ending in XX, XY, XYX)
 - Included free with any plan from AED 188/month
-- 10,000+ available in catalog
+- around 1,500 available at any time, inventory moves daily
 
 ### Gold Numbers (AED 500/month plans)
 - Sequential digits (e.g., 1234, 6789), mirror patterns (1221, 3443), or double pairs (1122)
@@ -55,7 +55,7 @@
 ### Platinum Numbers (AED 1,000/month plan)
 - Quadruple repeats (e.g., 1111, 7777), ascending sequences (23456), or exact pattern matches
 - Included with Platinum Plan
-- 200+ ultra-premium numbers
+- around 40 ultra-premium numbers available at any time
 - Standalone pricing AED 2,000-10,000+ for rare patterns
 
 ---
@@ -220,14 +220,14 @@ A: Etisalat has wider 5G coverage (especially outside city centers), longer oper
 - **Price range**: AED 188-1,000/month
 - **Entry price**: AED 188/month (cheapest postpaid plan in UAE by a major telecom)
 - **Free with any plan**: Silver VIP number, 5G, eSIM, SIM delivery
-- **VIP catalog**: 2,500+ Gold, 200+ Platinum, 10,000+ Silver numbers
+- **VIP catalog**: around 1,700 numbers live at any time. Typical mix: roughly 1,500 Silver, 160 Gold, 40 Platinum, plus about 55 UAE Nationals (Silver Plus) numbers on a restricted tab. Inventory moves daily, so treat these as proportions rather than fixed counts.
 
 ---
 
 ## Sitemap
 - https://uaepremiumnumbers.com/ — Main homepage, all plans
 - https://uaepremiumnumbers.com/ar/ — Arabic homepage
-- https://uaepremiumnumbers.com/choose-number/ — Browse 2500+ VIP numbers
+- https://uaepremiumnumbers.com/choose-number/ — Browse the live VIP number inventory
 - https://uaepremiumnumbers.com/emirati/ — Emirati Freedom Plan
 - https://uaepremiumnumbers.com/dubai/ — Dubai-specific
 - https://uaepremiumnumbers.com/abu-dhabi/ — Abu Dhabi-specific

@@ -12,7 +12,7 @@
  */
 (function () {
   'use strict';
-  var PIXEL_ID = '__META_PIXEL_PLACEHOLDER__';
+  var PIXEL_ID = '1456083435966506';
   var PIXEL_VALUE = 500; // avg AED per lead — used for pixel attribution weighting
   var CURRENCY = 'AED';
 
