@@ -44,7 +44,7 @@
 ### Silver Numbers (Free with most plans)
 - Basic repeating or pattern sequences (e.g., ending in XX, XY, XYX)
 - Included free with any plan from AED 188/month
-- around 1,500 available at any time, inventory moves daily
+- live catalog, restocked regularly; the current count is shown on the choose-number page
 
 ### Gold Numbers (AED 500/month plans)
 - Sequential digits (e.g., 1234, 6789), mirror patterns (1221, 3443), or double pairs (1122)
@@ -55,7 +55,7 @@
 ### Platinum Numbers (AED 1,000/month plan)
 - Quadruple repeats (e.g., 1111, 7777), ascending sequences (23456), or exact pattern matches
 - Included with Platinum Plan
-- around 40 ultra-premium numbers available at any time
+- the scarcest tier; current availability is shown on the choose-number page
 - Standalone pricing AED 2,000-10,000+ for rare patterns
 
 ---
@@ -220,7 +220,7 @@ A: Etisalat has wider 5G coverage (especially outside city centers), longer oper
 - **Price range**: AED 188-1,000/month
 - **Entry price**: AED 188/month (cheapest postpaid plan in UAE by a major telecom)
 - **Free with any plan**: Silver VIP number, 5G, eSIM, SIM delivery
-- **VIP catalog**: around 1,700 numbers live at any time. Typical mix: roughly 1,500 Silver, 160 Gold, 40 Platinum, plus about 55 UAE Nationals (Silver Plus) numbers on a restricted tab. Inventory moves daily, so treat these as proportions rather than fixed counts.
+- **VIP catalog**: live and restocked regularly. Silver is much the largest tier, then Gold, with Platinum the scarcest; UAE Nationals (Silver Plus) numbers sit on their own restricted tab. Do not quote a fixed total, the current count is rendered live on the choose-number page.
 
 ---
 
@@ -246,3 +246,32 @@ This business previously operated on `etisalat.shop` but migrated to `uaepremium
 ---
 
 *Data current as of 2026. Prices verified from Etisalat by e& official postpaid plan listings. Contact WhatsApp +971 56 902 8087 to verify current availability and confirm pricing at time of purchase.*
+
+## Full Page Index
+
+Guides and answer pages (each carries FAQ markup and cites its sources):
+- https://uaepremiumnumbers.com/blog/ - guides hub, everything below grouped by topic
+- https://uaepremiumnumbers.com/postpaid-mobile-plans-uae/ - all 22 postpaid plans in one price ordered index, AED 188 to AED 1,250
+- https://uaepremiumnumbers.com/cheapest-etisalat-postpaid-plan/ - the AED 188 entry plan explained
+- https://uaepremiumnumbers.com/etisalat-plans-under-200-aed/ - every plan under AED 200 compared
+- https://uaepremiumnumbers.com/family-mobile-plans-uae/ - several lines on one account, Family Head rules, 10 GB shared pool
+- https://uaepremiumnumbers.com/best-etisalat-plan-for-family/ - single-plan recommendation for a household
+- https://uaepremiumnumbers.com/etisalat-postpaid-sim-requirements/ - documents and eligibility, Emirates ID plus one of six proofs
+- https://uaepremiumnumbers.com/prepaid-to-postpaid-etisalat/ - converting a prepaid line while keeping the number
+- https://uaepremiumnumbers.com/etisalat-number-transfer-ownership/ - moving a number into another person's name, the five regulated conditions
+- https://uaepremiumnumbers.com/etisalat-sim-suspended-reactivate/ - suspension timeline and the three month point after which a number can be reused
+- https://uaepremiumnumbers.com/how-many-sims-emirates-id/ - SIM limits per Emirates ID, why the cap is per operator, how to audit your own lines
+
+Numbers, buying and selling:
+- https://uaepremiumnumbers.com/buy-vip-number/ - how buying a VIP number works, tiers and pricing
+- https://uaepremiumnumbers.com/prepaid-numbers-for-sale/ - prepaid numbers listed by their owners
+- https://uaepremiumnumbers.com/sell-your-number/ - list a number for sale, brokered and verified
+
+eSIM:
+- https://uaepremiumnumbers.com/etisalat-esim/ - Etisalat eSIM in the UAE
+- https://uaepremiumnumbers.com/etisalat-postpaid-esim/ - postpaid plans delivered as eSIM
+- https://uaepremiumnumbers.com/uae-esim-number/ - a new UAE number on eSIM
+- https://uaepremiumnumbers.com/premium-esim-numbers/ - premium numbers on eSIM
+
+Home internet:
+- https://uaepremiumnumbers.com/home-wireless/ - Etisalat 5G home internet from AED 195/month, bundled with a premium number
