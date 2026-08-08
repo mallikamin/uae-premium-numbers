@@ -746,6 +746,19 @@ a { color: inherit; }
   border: 1px solid rgba(201, 169, 98, 0.25);
 }
 
+.badge-platinum {
+  background: rgba(229, 228, 226, 0.14);
+  color: var(--platinum);
+  border: 1px solid rgba(229, 228, 226, 0.35);
+  box-shadow: 0 0 8px rgba(229, 228, 226, 0.15);
+}
+
+.badge-silver-plus {
+  background: rgba(168, 199, 221, 0.12);
+  color: #A8C7DD;
+  border: 1px solid rgba(168, 199, 221, 0.3);
+}
+
 .btn-wa {
   display: inline-flex;
   align-items: center;
@@ -859,6 +872,8 @@ a { color: inherit; }
 
 .card-price.silver-card-price { color: var(--silver); }
 .card-price.gold-card-price { color: var(--gold); }
+.card-price.platinum-card-price { color: var(--platinum); }
+.card-price.silver-plus-card-price { color: #A8C7DD; }
 
 /* ========================================
    ERROR & EMPTY STATES
@@ -1163,6 +1178,8 @@ a { color: inherit; }
         <button class="cat-tab active" data-category="all" role="tab" aria-selected="true">All Numbers</button>
         <button class="cat-tab" data-category="silver" role="tab" aria-selected="false">Silver</button>
         <button class="cat-tab" data-category="gold" role="tab" aria-selected="false">Gold</button>
+        <button class="cat-tab" data-category="platinum" role="tab" aria-selected="false">Platinum</button>
+        <button class="cat-tab" data-category="silver-plus" role="tab" aria-selected="false">UAE Nationals Only</button>
       </div>
     </div>
 
@@ -1262,6 +1279,9 @@ var PARTNER_API = 'https://script.google.com/macros/s/AKfycbyH1KBC63S7yB3wSpHw-s
 var allNumbers = [];
 var filteredNumbers = [];
 var activeCategory = 'all';
+/* Silver Plus is the UAE-Nationals-only tier (AED 400 Emirati Freedom plan).
+   Show that name to users, keep 'Silver Plus' as the internal sheet value. */
+function displayCategory(cat) { return cat === 'Silver Plus' ? 'UAE Nationals' : cat; }
 // Fisher-Yates shuffle (used per-tier below).
 function shuffleInPlace(arr) {
   for (var i = arr.length - 1; i > 0; i--) {
@@ -1747,7 +1767,10 @@ function parseCSV(csv) {
     var cat = category;
     if (catLower === 'gold') cat = 'Gold';
     else if (catLower === 'silver') cat = 'Silver';
-    else continue; // Skip Silver Plus and any other categories
+    else if (catLower === 'platinum') cat = 'Platinum';
+    else if (catLower === 'silver plus') cat = 'Silver Plus';
+    else if (catLower === 'gold plus' || catLower === 'gold plus+') continue; // hidden site-wide, same AED 1,000/mo as Platinum but worse value (parity with GN, Malik 2026-06-23)
+    else continue; // Skip STANDARD and any other categories
 
     if (!withZero && withoutZero) withZero = '0' + withoutZero;
     if (!withZero) continue;
@@ -1776,11 +1799,19 @@ function parseCSV(csv) {
 function applyFilters() {
   var results = allNumbers;
 
+  // UAE Nationals (Silver Plus) numbers are restricted, only surfaced on their own
+  // tab, never in "All Numbers", the other tier tabs, or search outside that tab.
+  if (activeCategory !== 'silver-plus') {
+    results = results.filter(function(n) { return n.category !== 'Silver Plus'; });
+  }
+
   // Category filter
   if (activeCategory !== 'all') {
     var catMap = {
       'gold': 'Gold',
-      'silver': 'Silver'
+      'silver': 'Silver',
+      'platinum': 'Platinum',
+      'silver-plus': 'Silver Plus'
     };
     var target = catMap[activeCategory];
     if (target) {
@@ -1849,6 +1880,14 @@ function createCard(num) {
     badgeClass += 'badge-gold';
     priceClass += 'gold-card-price';
     priceText = 'AED 500<span>/mo plan</span>';
+  } else if (num.category === 'Platinum') {
+    badgeClass += 'badge-platinum';
+    priceClass += 'platinum-card-price';
+    priceText = 'AED 1,000<span>/mo plan</span>';
+  } else if (num.category === 'Silver Plus') {
+    badgeClass += 'badge-silver-plus';
+    priceClass += 'silver-plus-card-price';
+    priceText = 'AED 400<span>/mo plan</span>';
   } else {
     badgeClass += 'badge-silver';
     priceClass += 'silver-card-price';
@@ -1858,7 +1897,7 @@ function createCard(num) {
   card.innerHTML =
     '<div class="card-top">' +
       '<span class="number-display">' + escapeHtml(num.formatted) + '</span>' +
-      '<span class="' + badgeClass + '">' + escapeHtml(num.category) + '</span>' +
+      '<span class="' + badgeClass + '">' + escapeHtml(displayCategory(num.category)) + '</span>' +
     '</div>' +
     '<div class="' + priceClass + '">' + priceText + '</div>' +
     '<a class="btn-wa" href="https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent('Hi, I\'m interested in the ' + num.category + ' number ' + num.formatted + ' from uaepremiumnumbers.com') + '" target="_blank" rel="noopener noreferrer" data-message="' + escapeHtml('Hi, I\'m interested in the ' + num.category + ' number ' + num.formatted + ' from uaepremiumnumbers.com') + '" data-num="' + escapeHtml(num.formatted) + '" data-cat="' + escapeHtml(num.category) + '">' +

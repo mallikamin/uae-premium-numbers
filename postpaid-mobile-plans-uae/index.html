@@ -127,7 +127,23 @@ footer a{color:var(--text-muted)}
 footer a:hover{color:var(--gold)}
 .footer-links{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem}
 .src{font-size:0.82rem;color:rgba(245,245,240,0.45)}
-@media(max-width:768px){.hero{padding:3rem 0 2rem}.hero h1{font-size:1.6rem}.nav-links{gap:0.8rem;font-size:0.8rem}table{font-size:0.82rem}th,td{padding:0.5rem}}</style>
+@media(max-width:768px){.hero{padding:3rem 0 2rem}.hero h1{font-size:1.6rem}.nav-links{gap:0.8rem;font-size:0.8rem}table{font-size:0.82rem}th,td{padding:0.5rem}}/* 2026-08-08 hero contrast fix. assets/premium.css sets .hero to a white
+   gradient, which made this dark template's hero h1 and lead render white on
+   white. This block loads after premium.css and restores the dark hero. */
+.hero{background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%) !important}
+.hero::after{background:radial-gradient(ellipse at 50% 0%,rgba(201,169,98,0.10) 0%,transparent 60%) !important}
+.hero h1{color:var(--text)}
+.hero h1 span{color:var(--gold)}
+.hero .lead{color:var(--text-muted)}
+/* 2026-08-08 inline CTA band, breaks up long-form guide copy */
+.inline-cta{background:linear-gradient(135deg,rgba(201,169,98,0.10),rgba(201,169,98,0.04));border:1px solid rgba(201,169,98,0.28);border-radius:12px;padding:1.4rem 1.6rem;margin:2.2rem 0;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;flex-wrap:wrap}
+.inline-cta .ic-copy{flex:1 1 320px;min-width:260px}
+.inline-cta .ic-copy strong{display:block;font-family:var(--font-heading);font-size:1.08rem;color:var(--text);margin-bottom:0.25rem}
+.inline-cta .ic-copy span{font-size:0.9rem;color:var(--text-muted)}
+.inline-cta .ic-actions{display:flex;gap:0.7rem;flex-wrap:wrap}
+.inline-cta .btn{padding:0.7rem 1.25rem;font-size:0.88rem}
+@media(max-width:640px){.inline-cta{padding:1.15rem 1.2rem}.inline-cta .ic-actions{width:100%}.inline-cta .btn{flex:1 1 100%;justify-content:center}}
+</style>
 </head>
 <body>
 
@@ -249,6 +265,15 @@ footer a:hover{color:var(--gold)}
     <p>Be honest about why you would take one of these. On raw allowances the AED 600 plan already
     gives you unlimited everything. The AED 1,000 Platinum tier is bought for the Platinum number
     that comes with it, not for the megabytes. If the number is not the point, stop at AED 600.</p>
+
+
+    <div class="inline-cta">
+      <div class="ic-copy"><strong>Want help picking between these?</strong><span>Tell us your usage and budget. We will name the plan, and the free number tier it carries.</span></div>
+      <div class="ic-actions">
+        <a href="https://wa.me/971569028087?text=Hi%2C%20I%20want%20help%20choosing%20an%20Etisalat%20postpaid%20plan" class="btn btn-gold" target="_blank" rel="noopener noreferrer">Talk to a live Etisalat Specialist</a>
+        <a href="/choose-number/" class="btn btn-outline">Browse Numbers</a>
+      </div>
+    </div>
 
     <h2>Local minutes or flexi minutes, the choice people get wrong</h2>
     <p>Nearly every plan above comes in two versions and the only difference is the minute bundle.</p>

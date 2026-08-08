@@ -127,7 +127,23 @@ footer a{color:var(--text-muted)}
 footer a:hover{color:var(--gold)}
 .footer-links{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem}
 .src{font-size:0.82rem;color:rgba(245,245,240,0.45)}
-@media(max-width:768px){.hero{padding:3rem 0 2rem}.hero h1{font-size:1.6rem}.nav-links{gap:0.8rem;font-size:0.8rem}table{font-size:0.82rem}th,td{padding:0.5rem}}</style>
+@media(max-width:768px){.hero{padding:3rem 0 2rem}.hero h1{font-size:1.6rem}.nav-links{gap:0.8rem;font-size:0.8rem}table{font-size:0.82rem}th,td{padding:0.5rem}}/* 2026-08-08 hero contrast fix. assets/premium.css sets .hero to a white
+   gradient, which made this dark template's hero h1 and lead render white on
+   white. This block loads after premium.css and restores the dark hero. */
+.hero{background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%) !important}
+.hero::after{background:radial-gradient(ellipse at 50% 0%,rgba(201,169,98,0.10) 0%,transparent 60%) !important}
+.hero h1{color:var(--text)}
+.hero h1 span{color:var(--gold)}
+.hero .lead{color:var(--text-muted)}
+/* 2026-08-08 inline CTA band, breaks up long-form guide copy */
+.inline-cta{background:linear-gradient(135deg,rgba(201,169,98,0.10),rgba(201,169,98,0.04));border:1px solid rgba(201,169,98,0.28);border-radius:12px;padding:1.4rem 1.6rem;margin:2.2rem 0;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;flex-wrap:wrap}
+.inline-cta .ic-copy{flex:1 1 320px;min-width:260px}
+.inline-cta .ic-copy strong{display:block;font-family:var(--font-heading);font-size:1.08rem;color:var(--text);margin-bottom:0.25rem}
+.inline-cta .ic-copy span{font-size:0.9rem;color:var(--text-muted)}
+.inline-cta .ic-actions{display:flex;gap:0.7rem;flex-wrap:wrap}
+.inline-cta .btn{padding:0.7rem 1.25rem;font-size:0.88rem}
+@media(max-width:640px){.inline-cta{padding:1.15rem 1.2rem}.inline-cta .ic-actions{width:100%}.inline-cta .btn{flex:1 1 100%;justify-content:center}}
+</style>
 </head>
 <body>
 
@@ -184,6 +200,15 @@ footer a:hover{color:var(--gold)}
       you already have, which is the part most people actually need.</p>
     </div>
 
+
+    <div class="inline-cta">
+      <div class="ic-copy"><strong>Not sure how many lines are in your name?</strong><span>We can check what a second line needs and what it will cost, in one message.</span></div>
+      <div class="ic-actions">
+        <a href="https://wa.me/971569028087?text=Hi%2C%20I%20want%20to%20check%20how%20many%20lines%20are%20on%20my%20Emirates%20ID" class="btn btn-gold" target="_blank" rel="noopener noreferrer">Talk to a live Etisalat Specialist</a>
+        <a href="/choose-number/" class="btn btn-outline">Browse Numbers</a>
+      </div>
+    </div>
+
     <h2>How to see every number registered in your name, free</h2>
     <p>You have two routes, and both are free.</p>
     <h3>1. The regulator's own service</h3>
@@ -229,6 +254,16 @@ footer a:hover{color:var(--gold)}
     once five conditions are met</a>. Or, if the lines genuinely belong together as a household,
     put them on a <a href="/family-mobile-plans-uae/">family arrangement built for multiple
     lines</a> rather than stacking unrelated registrations on one ID.</p>
+
+
+    <div class="inline-cta">
+      <div class="ic-copy"><strong>Adding a second line?</strong><span>Every postpaid plan includes a free premium number. Pick a good one rather than whatever comes up.</span></div>
+      <div class="ic-actions">
+        <a href="https://wa.me/971569028087?text=Hi%2C%20I%20want%20to%20add%20a%20second%20line%20with%20a%20premium%20number" class="btn btn-gold" target="_blank" rel="noopener noreferrer">Talk to a live Etisalat Specialist</a>
+        <a href="/choose-number/" class="btn btn-outline">Browse Numbers</a>
+        <a href="/postpaid-mobile-plans-uae/" class="btn btn-outline">See All 22 Plans</a>
+      </div>
+    </div>
 
     <h2>Adding a second line</h2>
     <p>Assuming you are inside the ceiling, a second line is an ordinary new subscription: original

@@ -127,7 +127,23 @@ footer a{color:var(--text-muted)}
 footer a:hover{color:var(--gold)}
 .footer-links{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem}
 .src{font-size:0.82rem;color:rgba(245,245,240,0.45)}
-@media(max-width:768px){.hero{padding:3rem 0 2rem}.hero h1{font-size:1.6rem}.nav-links{gap:0.8rem;font-size:0.8rem}table{font-size:0.82rem}th,td{padding:0.5rem}}</style>
+@media(max-width:768px){.hero{padding:3rem 0 2rem}.hero h1{font-size:1.6rem}.nav-links{gap:0.8rem;font-size:0.8rem}table{font-size:0.82rem}th,td{padding:0.5rem}}/* 2026-08-08 hero contrast fix. assets/premium.css sets .hero to a white
+   gradient, which made this dark template's hero h1 and lead render white on
+   white. This block loads after premium.css and restores the dark hero. */
+.hero{background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%) !important}
+.hero::after{background:radial-gradient(ellipse at 50% 0%,rgba(201,169,98,0.10) 0%,transparent 60%) !important}
+.hero h1{color:var(--text)}
+.hero h1 span{color:var(--gold)}
+.hero .lead{color:var(--text-muted)}
+/* 2026-08-08 inline CTA band, breaks up long-form guide copy */
+.inline-cta{background:linear-gradient(135deg,rgba(201,169,98,0.10),rgba(201,169,98,0.04));border:1px solid rgba(201,169,98,0.28);border-radius:12px;padding:1.4rem 1.6rem;margin:2.2rem 0;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;flex-wrap:wrap}
+.inline-cta .ic-copy{flex:1 1 320px;min-width:260px}
+.inline-cta .ic-copy strong{display:block;font-family:var(--font-heading);font-size:1.08rem;color:var(--text);margin-bottom:0.25rem}
+.inline-cta .ic-copy span{font-size:0.9rem;color:var(--text-muted)}
+.inline-cta .ic-actions{display:flex;gap:0.7rem;flex-wrap:wrap}
+.inline-cta .btn{padding:0.7rem 1.25rem;font-size:0.88rem}
+@media(max-width:640px){.inline-cta{padding:1.15rem 1.2rem}.inline-cta .ic-actions{width:100%}.inline-cta .btn{flex:1 1 100%;justify-content:center}}
+</style>
 </head>
 <body>
 
@@ -212,6 +228,15 @@ footer a:hover{color:var(--gold)}
     <p>The operator also has to run a free consumer care line for exactly these enquiries, and has
     to notify you of the outcome of a registration within 48 hours.</p>
 
+
+    <div class="inline-cta">
+      <div class="ic-copy"><strong>Still inside the three month window?</strong><span>Tell us which document expired and we will tell you exactly what to bring.</span></div>
+      <div class="ic-actions">
+        <a href="https://wa.me/971569028087?text=Hi%2C%20my%20Etisalat%20line%20is%20suspended%20and%20I%20need%20help%20restoring%20it" class="btn btn-gold" target="_blank" rel="noopener noreferrer">Talk to a live Etisalat Specialist</a>
+        <a href="/choose-number/" class="btn btn-outline">Browse Numbers</a>
+      </div>
+    </div>
+
     <h2>What to do, in order</h2>
     <ol>
       <li><strong>Work out which document expired.</strong> Emirates ID, visa or passport. For non
@@ -226,6 +251,16 @@ footer a:hover{color:var(--gold)}
       <a href="/how-many-sims-emirates-id/">Here is how to see every number registered to your
       Emirates ID</a>.</li>
     </ol>
+
+
+    <div class="inline-cta">
+      <div class="ic-copy"><strong>Number already gone?</strong><span>Every postpaid plan comes with a free Silver, Gold or Platinum number. See what is available today.</span></div>
+      <div class="ic-actions">
+        <a href="https://wa.me/971569028087?text=Hi%2C%20I%20lost%20my%20number%20and%20need%20a%20replacement%20line" class="btn btn-gold" target="_blank" rel="noopener noreferrer">Talk to a live Etisalat Specialist</a>
+        <a href="/choose-number/" class="btn btn-outline">Browse Numbers</a>
+        <a href="/postpaid-mobile-plans-uae/" class="btn btn-outline">See All 22 Plans</a>
+      </div>
+    </div>
 
     <h2>If you have already lost the number</h2>
     <p>If the line was deactivated and the number has gone, asking is still worth a phone call, but

@@ -124,7 +124,15 @@ footer a{color:var(--text-muted)}
 footer a:hover{color:var(--gold)}
 .footer-links{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem}
 .src{font-size:0.82rem;color:rgba(245,245,240,0.45)}
-@media(max-width:768px){.hero{padding:3rem 0 2rem}.hero h1{font-size:1.6rem}.nav-links{gap:0.8rem;font-size:0.8rem}table{font-size:0.82rem}th,td{padding:0.5rem}}</style>
+@media(max-width:768px){.hero{padding:3rem 0 2rem}.hero h1{font-size:1.6rem}.nav-links{gap:0.8rem;font-size:0.8rem}table{font-size:0.82rem}th,td{padding:0.5rem}}/* 2026-08-08 hero contrast fix. assets/premium.css sets .hero to a white
+   gradient, which made this dark template's hero h1 and lead render white on
+   white. This block loads after premium.css and restores the dark hero. */
+.hero{background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%) !important}
+.hero::after{background:radial-gradient(ellipse at 50% 0%,rgba(201,169,98,0.10) 0%,transparent 60%) !important}
+.hero h1{color:var(--text)}
+.hero h1 span{color:var(--gold)}
+.hero .lead{color:var(--text-muted)}
+</style>
 </head>
 <body>
 

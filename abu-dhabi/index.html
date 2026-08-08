@@ -193,6 +193,14 @@ footer a:hover{color:var(--gold)}
 .footer-cities{margin-bottom:1rem}
 .footer-cities a{margin:0 0.5rem}
 @media(max-width:768px){.hero h1{font-size:1.8rem}.nav-links{gap:0.8rem}.plan-grid{grid-template-columns:1fr}.trust-strip .container{gap:1rem}}
+/* 2026-08-08 hero contrast fix. assets/premium.css sets .hero to a white
+   gradient, which made this dark template's hero h1 and lead render white on
+   white. This block loads after premium.css and restores the dark hero. */
+.hero{background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%) !important}
+.hero::after{background:radial-gradient(ellipse at 50% 0%,rgba(201,169,98,0.10) 0%,transparent 60%) !important}
+.hero h1{color:var(--text)}
+.hero h1 span{color:var(--gold)}
+.hero .lead{color:var(--text-muted)}
 </style>
 </head>
 <body>
