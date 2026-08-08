@@ -39,21 +39,118 @@ if sys.platform == "win32":
 W = H = 1080
 
 # Palette — matches make_card.py for visual consistency. Etisalat red on white.
-BG = (255, 255, 255)             # white card background
-RED = (237, 28, 36)              # #ED1C24 Etisalat red
-RED_DARK = (177, 20, 26)         # ribbon shadow + darker accents
-RED_TINT = (253, 235, 236)       # cell tint, pill fills
-TEXT_DARK = (26, 26, 26)
-TEXT_BODY = (60, 60, 60)
-INK = (15, 15, 20)               # number cell text
-WHITE = (255, 255, 255)
-MUTED = (140, 140, 145)
-HAIRLINE = (228, 228, 232)
-CELL_PANEL = (250, 250, 252)     # subtle off-white for number cells
+# EXPERIMENT 2026-06-28 (Malik): dark "midnight-gold" palette for upn grids
+# (site-specific red/white branding intentionally dropped for the trial). The
+# constant NAMES are kept so the draw code is unchanged; only values flip. The
+# RED name now carries the GOLD accent (used for fills + accent text); ON_ACCENT
+# is the dark text that sits on those gold fills (ribbon/pills/CTA).
+BG = (13, 19, 34)                # #0d1322 dark navy card background
+RED = (244, 214, 122)            # #f4d67a gold accent (fills + text + stripes)
+RED_DARK = (158, 122, 30)        # #9e7a1e darker gold (ribbon underline)
+RED_TINT = (30, 28, 18)          # dark gold tint
+TEXT_DARK = (245, 245, 240)      # #f5f5f0 light body text (was dark)
+TEXT_BODY = (207, 210, 218)      # #cfd2da light grey
+INK = (244, 214, 122)            # number cell text → gold on dark cell
+WHITE = (255, 255, 255)          # kept (authority-badge text on the green badge)
+ON_ACCENT = (13, 19, 34)         # dark text that sits ON gold fills (ribbon/pill/CTA)
+MUTED = (138, 142, 153)
+HAIRLINE = (45, 48, 62)          # dark hairline (dividers, cell borders)
+CELL_PANEL = (22, 26, 40)        # dark number-cell + price-box fill
 GREEN_BADGE = (40, 160, 90)      # kept — green = certified/trust signal
 
 # Back-compat alias (some older code refs BG_COLOR; the local renderer just uses BG)
 BG_COLOR = BG
+
+# --- 5 rotating creative palettes (2026-06-28) --------------------------------
+# Match the gn/ppp/vipd grid-card palettes by NAME + ORDER. upn is a Pillow
+# renderer (NOT the CSS render_cards twin), so a "palette" here is a swap of the
+# colour CONSTANTS, not a CSS override. The accent (RED) drives the ribbon, tier
+# pills, CTA, left-stripes, numbers and price; BG is the dark card. Body text
+# stays near-white/grey across palettes — same as the gn/ppp/vipd CSS, where only
+# the background + accent change per palette. midnight-gold == the current base.
+PALETTES = {
+    "midnight-gold": {
+        "BG": (13, 19, 34),     "RED": (244, 214, 122), "RED_DARK": (158, 122, 30),
+        "RED_TINT": (30, 28, 18), "INK": (244, 214, 122), "CELL_PANEL": (22, 26, 40),
+        "HAIRLINE": (45, 48, 62), "ON_ACCENT": (13, 19, 34),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+    "royal-emerald": {
+        "BG": (8, 22, 15),      "RED": (95, 224, 163),  "RED_DARK": (48, 112, 82),
+        "RED_TINT": (11, 27, 20), "INK": (95, 224, 163), "CELL_PANEL": (17, 29, 21),
+        "HAIRLINE": (40, 51, 43), "ON_ACCENT": (8, 22, 15),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+    "deep-sapphire": {
+        "BG": (10, 20, 48),     "RED": (116, 182, 255), "RED_DARK": (58, 91, 128),
+        "RED_TINT": (14, 22, 31), "INK": (116, 182, 255), "CELL_PANEL": (19, 27, 54),
+        "HAIRLINE": (42, 49, 76), "ON_ACCENT": (10, 20, 48),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+    "burgundy-gold": {
+        "BG": (36, 10, 16),     "RED": (240, 198, 116), "RED_DARK": (120, 99, 58),
+        "RED_TINT": (29, 24, 14), "INK": (240, 198, 116), "CELL_PANEL": (45, 17, 22),
+        "HAIRLINE": (68, 39, 44), "ON_ACCENT": (36, 10, 16),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+    "graphite-platinum": {
+        "BG": (21, 24, 29),     "RED": (217, 222, 231), "RED_DARK": (109, 111, 116),
+        "RED_TINT": (26, 27, 28), "INK": (217, 222, 231), "CELL_PANEL": (30, 31, 35),
+        "HAIRLINE": (53, 53, 57), "ON_ACCENT": (21, 24, 29),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+    "rose-quartz": {
+        "BG": (42, 14, 26),     "RED": (247, 168, 196), "RED_DARK": (150, 90, 110),
+        "RED_TINT": (29, 18, 24), "INK": (247, 168, 196), "CELL_PANEL": (52, 20, 34),
+        "HAIRLINE": (74, 44, 54), "ON_ACCENT": (42, 14, 26),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+    "teal-aqua": {
+        "BG": (6, 32, 31),      "RED": (95, 224, 216), "RED_DARK": (48, 112, 108),
+        "RED_TINT": (11, 27, 26), "INK": (95, 224, 216), "CELL_PANEL": (17, 42, 40),
+        "HAIRLINE": (40, 56, 54), "ON_ACCENT": (6, 32, 31),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+    "amethyst-violet": {
+        "BG": (23, 8, 42),      "RED": (199, 155, 255), "RED_DARK": (100, 78, 128),
+        "RED_TINT": (20, 14, 31), "INK": (199, 155, 255), "CELL_PANEL": (33, 18, 54),
+        "HAIRLINE": (50, 42, 76), "ON_ACCENT": (23, 8, 42),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+    "copper-bronze": {
+        "BG": (36, 17, 5),      "RED": (232, 167, 114), "RED_DARK": (120, 87, 58),
+        "RED_TINT": (29, 20, 12), "INK": (232, 167, 114), "CELL_PANEL": (45, 25, 15),
+        "HAIRLINE": (68, 48, 32), "ON_ACCENT": (36, 17, 5),
+        "TEXT_DARK": (245, 245, 240), "TEXT_BODY": (207, 210, 218), "MUTED": (138, 142, 153),
+    },
+}
+PALETTE_ORDER = ["midnight-gold", "royal-emerald", "deep-sapphire",
+                 "burgundy-gold", "graphite-platinum",
+                 "rose-quartz", "teal-aqua", "amethyst-violet", "copper-bronze"]
+
+_PALETTE_GLOBALS = ("BG", "RED", "RED_DARK", "RED_TINT", "INK", "CELL_PANEL",
+                    "HAIRLINE", "ON_ACCENT", "TEXT_DARK", "TEXT_BODY", "MUTED")
+
+
+def _apply_palette(name: str | None) -> str:
+    """Swap the module-level colour constants to the named palette and return it.
+
+    The draw_* helpers read these names from the module namespace at call time,
+    so reassigning the globals before rendering re-skins the whole card. This is
+    safe ONLY because cards render SEQUENTIALLY (one process, one card at a time
+    in daily_generator). Do NOT parallelise card rendering without making the
+    palette state local instead of global.
+    """
+    if not name:
+        name = "midnight-gold"
+    if name not in PALETTES:
+        raise ValueError(f"Unknown palette '{name}'. Use one of {PALETTE_ORDER}.")
+    pal = PALETTES[name]
+    g = globals()
+    for k in _PALETTE_GLOBALS:
+        g[k] = pal[k]
+    g["BG_COLOR"] = pal["BG"]
+    return name
 
 # Unified conversion WhatsApp — standard across all brands so every lead lands
 # in one CRM (Malik, 2026-06-24). Matches postpaidplans + make_card.py.
@@ -142,7 +239,9 @@ class GridLayout:
 
 def grid_layout(num_count: int) -> GridLayout:
     if num_count <= 4:
-        return GridLayout(cols=1, rows=4, cell_h=110, top_y=320, side_pad=80, cell_gap=18, number_font_size=58)
+        # 2x2 for 3-4 numbers (thin Gold/Platinum pattern pools) — keeps the grid
+        # compact so the price box + CTA don't collide at the bottom.
+        return GridLayout(cols=2, rows=2, cell_h=128, top_y=350, side_pad=60, cell_gap=18, number_font_size=52)
     if num_count <= 6:
         return GridLayout(cols=2, rows=3, cell_h=120, top_y=320, side_pad=60, cell_gap=16, number_font_size=44)
     if num_count <= 8:
@@ -199,10 +298,11 @@ def draw_authority_badge(draw, y: int, text: str = "OFFICIAL ETISALAT CHANNEL PA
     draw.text((bx + pad_x, y + pad_y - 2), text, font=font, fill=WHITE)
 
 
-def draw_number_grid(draw, numbers, layout: GridLayout):
+def draw_number_grid(draw, numbers, layout: GridLayout, tier: str | None = None):
     """Number cells — light off-white panels with a red left stripe + red
     corner pill, dark number text. Inverted from GN's dark-cell + gold-text
-    treatment; gives the same scannability against a white card background."""
+    treatment; gives the same scannability against a white card background.
+    `tier` sets the per-cell pill (SILVER/GOLD/PLATINUM) — never hardcode it."""
     cols = layout.cols
     rows = layout.rows
     cell_h = layout.cell_h
@@ -224,14 +324,14 @@ def draw_number_grid(draw, numbers, layout: GridLayout):
         # Red accent stripe on left edge (4px wide, full height)
         draw.rectangle([x, y + 1, x + 4, y + cell_h - 1], fill=RED)
 
-        # "GOLD" tier pill — red bg, white text
-        pill_text = "GOLD"
+        # Tier pill — accent bg, dark text. Tier-correct (was hardcoded "GOLD").
+        pill_text = (tier or "GOLD").upper()
         pw, ph = text_size(draw, pill_text, badge_font)
         pill_x = x + 14
         pill_y = y + 10
         draw.rounded_rectangle([pill_x, pill_y, pill_x + pw + 12, pill_y + ph + 6],
                                radius=4, fill=RED)
-        draw.text((pill_x + 6, pill_y + 2), pill_text, font=badge_font, fill=WHITE)
+        draw.text((pill_x + 6, pill_y + 2), pill_text, font=badge_font, fill=ON_ACCENT)
 
         # The number — dark text on light cell
         nfmt = fmt_number(n)
@@ -249,7 +349,7 @@ def draw_from_price(draw, from_price: int, y_center: int):
     box_x2 = 300
     box_y2 = y_center + 55
     draw.rounded_rectangle([box_x1, box_y1, box_x2, box_y2],
-                           radius=14, fill=WHITE, outline=RED, width=2)
+                           radius=14, fill=CELL_PANEL, outline=RED, width=2)
 
     label_font = find_font(["seguisb.ttf", "arialbd.ttf"], 22)
     label = "Starting from"
@@ -278,7 +378,7 @@ def draw_footer(draw, wa_number: str, cta_text: str):
     draw.rounded_rectangle([px, py, px + pw, py + ph],
                            radius=ph // 2, fill=RED)
     draw.text((px + pad_x, py + pad_y - 2),
-              cta_text, font=cta_font, fill=WHITE)
+              cta_text, font=cta_font, fill=ON_ACCENT)
     wa_font = find_font(["georgiab.ttf", "arialbd.ttf"], 30)
     ww, _ = text_size(draw, wa_number, wa_font)
     draw.text(((W - ww) // 2, py + ph + 10),
@@ -291,7 +391,7 @@ def draw_top_ribbon(draw: ImageDraw.ImageDraw, height: int = 88) -> int:
     brand_font = find_font(["seguisb.ttf", "arialbd.ttf", "segoeui.ttf"], 32)
     bw, _ = text_size(draw, "UAE  PREMIUM  NUMBERS", brand_font)
     draw.text(((W - bw) // 2, (height - 32) // 2),
-              "UAE  PREMIUM  NUMBERS", font=brand_font, fill=WHITE)
+              "UAE  PREMIUM  NUMBERS", font=brand_font, fill=ON_ACCENT)
     draw.line([(0, height), (W, height)], fill=RED_DARK, width=1)
     return height
 
@@ -301,10 +401,12 @@ def render_grid_card(
     brand_variant: str = "uaepremiumnumbers",
     from_price: int = 188,
     subheadline: str | None = None,
+    tier: str | None = None,
     wa_number: str = WA_DISPLAY,
     cta_text: str = "Order on WhatsApp or Call",
     authority_badge: str = "OFFICIAL ETISALAT CHANNEL PARTNER",
     selling_points: list[str] | None = None,
+    palette: str | None = None,
     out_path: str = "grid.jpg",
 ) -> str:
     """Render a 1080x1080 multi-number grid card.
@@ -314,14 +416,20 @@ def render_grid_card(
         brand_variant: one of the keys in BRAND_VARIANTS.
         from_price: integer AED price for the 'Starting from' block.
         subheadline: optional override; if None, picks deterministically from SUBHEADLINES.
+        palette: one of PALETTE_ORDER; None → midnight-gold (the dark base).
         out_path: file path to save the JPG.
 
     Returns:
         out_path on success.
     """
+    _apply_palette(palette)
     if brand_variant not in BRAND_VARIANTS:
         raise ValueError(f"Unknown brand_variant '{brand_variant}'. Use one of {list(BRAND_VARIANTS)}.")
     bv = BRAND_VARIANTS[brand_variant]
+    # An EXPLICIT subheadline = a pattern-class card: the pattern label must ALWAYS show
+    # (it's the scroll-stopper), so force a single-line brand header to make room — even
+    # for variants that carry their own header_sub. None = legacy auto-subheadline.
+    explicit_sub = subheadline is not None
     if subheadline is None:
         # Stable pick: hash the first number for deterministic per-card subheadline
         idx = sum(ord(c) for c in (numbers[0] if numbers else brand_variant)) % len(SUBHEADLINES)
@@ -334,13 +442,17 @@ def render_grid_card(
     # Top red ribbon (replaces GN's 4px gold strip with a full brand band)
     draw_top_ribbon(draw, height=88)
 
-    draw_brand_header(draw, bv["header_top"], bv["header_sub"])
-    if not bv["header_sub"]:
+    if explicit_sub:
+        draw_brand_header(draw, bv["header_top"], None)
         draw_subheadline(draw, subheadline, y=200)
+    else:
+        draw_brand_header(draw, bv["header_top"], bv["header_sub"])
+        if not bv["header_sub"]:
+            draw_subheadline(draw, subheadline, y=200)
     draw_authority_badge(draw, y=275, text=authority_badge)
 
     layout = grid_layout(len(numbers))
-    draw_number_grid(draw, numbers, layout)
+    draw_number_grid(draw, numbers, layout, tier=tier)
 
     grid_bottom = layout.top_y + layout.rows * (layout.cell_h + layout.cell_gap)
     pricing_y = grid_bottom + 60
@@ -385,6 +497,7 @@ def main():
     p.add_argument("--subheadline", default=None)
     p.add_argument("--wa", default=WA_DISPLAY)
     p.add_argument("--cta", default="Order on WhatsApp or Call")
+    p.add_argument("--palette", default=None, choices=PALETTE_ORDER)
     p.add_argument("--out", required=True)
     args = p.parse_args()
 
@@ -396,6 +509,7 @@ def main():
         subheadline=args.subheadline,
         wa_number=args.wa,
         cta_text=args.cta,
+        palette=args.palette,
         out_path=args.out,
     )
     print(out)

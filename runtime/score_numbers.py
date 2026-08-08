@@ -28,7 +28,7 @@ from pathlib import Path
 _DEFAULT_SHEETS = [
     # 2026-07-13: master sheet re-issued (old 1YVz emptied). Real source of truth
     # at runtime is sheets.json next to this file; this is the last-resort fallback.
-    "1CfIRlk55aGLI2nLBuUFH4pvRu5gT6qSo3aIzh2iDeAo",
+    "1CoG5IYOxKdeTlOqCYuntfXxOUlOFWlSX9AiDB1ZBBQs",
 ]
 _DEFAULT_GID = "0"
 

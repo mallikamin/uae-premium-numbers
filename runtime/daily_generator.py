@@ -34,7 +34,7 @@ from datetime import datetime, date, timedelta
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import notify
 from make_card import render_card
-from make_grid_card import render_grid_card, BRAND_VARIANTS
+from make_grid_card import render_grid_card, BRAND_VARIANTS, PALETTE_ORDER
 from make_story_card import render_story, render_grid_story
 from score_numbers import fetch_all_rows, score_number, format_display
 
@@ -77,14 +77,40 @@ ID_PREFIX = "upn"             # post IDs are upn-001, upn-002, ...
 BRAND_NAME = "uae-premium-numbers"
 PAUSE_AFTER_BATCH_LIMIT = 3   # pause+ping for batches 1–3, auto-roll for 4+
 POSTS_PER_DAY = 5             # 2026-06-25: 3→5/day (Malik: aim for 4–5 posts/day across FB+IG)
-SINGLE_PER_DAY = 2            # UPN keeps its grid-heavy tilt
-GRID_PER_DAY = 3              # grids remain the bulk
+SINGLE_PER_DAY = 0            # 2026-06-29: PURE pattern-class — NO single-number cards (the proven
+GRID_PER_DAY = 5              # losing format); all 5/day are pattern cards, matching GN/PPP + the brief.
 GRID_NUMBERS_PER_CARD = 6     # each grid shows 6 numbers
 GRID_FROM_PRICE = 188         # AED — matches Probiz, our entry price for Etisalat Post Paid plans
 INTERVAL_MIN = 288            # 24h / 5 = 288 min between slots (~4.8h cadence)
 RUNWAY_HOURS = 12             # runway guard: skip if queue tail >12h ahead
 BATCH_DAYS_AFTER_FIRST = 10   # batch 1 was 1 day; batch 2+ are 10 days
 GOLD_PER_DAY = 1              # of 2 singles → 1 Gold + 1 Silver
+
+# ── PATTERN-CLASS grids (2026-06-29) ──
+# Organic grids are now single-tier PATTERN cards: 3-6 in-stock numbers that ALL share
+# ONE hot ending (e.g. all triple-7), labelled "TRIPLE 7 · MULTIPLE IN STOCK". Mirrors the
+# proven GN/PPP format (CRM n=32: triples = 56% of sales; Silver ~78%; 054 = 69%). Sell-out-
+# proof (the pool keeps many of the same pattern) and high-intent.
+PLATINUM_WEEKDAYS = (0, 3)    # Mon & Thu → ~2 Platinum test cards/week (sheet has ~43 platinum)
+TIER_PATTERNS = {
+    "silver":   ["777", "666", "999", "888", "555", "222"],
+    "gold":     ["888", "999", "777", "666", "8888", "7777"],
+    "platinum": ["8888", "7777"],
+}
+# Tier-matched PLAN price shown on the card (never a Silver price next to Gold numbers — the
+# 2026-06-07 DPA mismatch rule). Mirrors goldennummbers render_cards.TIERS.
+TIER_PRICE = {"silver": 188, "gold": 500, "platinum": 1000}
+TIER_PLAN = {
+    "silver":   {"label": "Silver",   "plan": "Freedom Plan 250", "perks": "Non-stop data + 1,000 local minutes"},
+    "gold":     {"label": "Gold",     "plan": "Gold Plan 500",    "perks": "Unlimited data + local & int'l calls"},
+    "platinum": {"label": "Platinum", "plan": "Platinum Plan",    "perks": "Unlimited everything + 20GB roaming"},
+}
+# Cross-brand pattern phasing (Malik 2026-06-29: "don't post the same posts across all pages —
+# mix the inventory patterns"). Each brand's generator uses the SAME formula with a different
+# BRAND_INDEX (gn=0, ppp=1, upn=2, vipd=3): the per-tier start offset = (ordinal day + BRAND_INDEX)
+# % len(endings). Since the 4 brands differ only by index, they LEAD each tier with a different hot
+# ending every day (rotating daily) → different patterns AND disjoint numbers across pages.
+BRAND_INDEX = 2
 
 # Auto-tuner output — written by creative_analytics/tuner.py (env-var-scoped
 # to UPN via run_analytics.sh). Missing file → defaults above (cold-start).
@@ -135,7 +161,7 @@ def tuned_mix(tuning: dict) -> dict:
     g_w = float(tw.get("Gold",   1.0))
     s_w = float(tw.get("Silver", 1.0))
     if (g_w == 1.0 and s_w == 1.0) or (g_w + s_w) <= 0:
-        gold = max(0, min(singles, round(singles * GOLD_PER_DAY / SINGLE_PER_DAY)))
+        gold = max(0, min(singles, round(singles * GOLD_PER_DAY / max(1, SINGLE_PER_DAY))))
     else:
         biased_g = GOLD_PER_DAY * g_w
         biased_s = (SINGLE_PER_DAY - GOLD_PER_DAY) * s_w
@@ -376,60 +402,142 @@ GRID_IG_HASHTAGS = (
 )
 
 
-def grid_caption_fb(grid_id: str, numbers_display: list[str], brand_variant: str) -> str:
-    """FB caption for grid posts. Includes ETISALAT + Post Paid Plans keywords."""
-    rng = random.Random(grid_id)
-    opener = rng.choice(GRID_FB_OPENERS)
-    cta = rng.choice(GRID_FB_CTAS).format(wa=WA_DISPLAY)
+def grid_caption_fb(grid_id: str, numbers_display: list[str], brand_variant: str,
+                    tier: str = "silver", pattern_label: str = "") -> str:
+    """FB caption for a single-tier PATTERN card. Leads with the pattern + tier-matched plan
+    (Silver 188 / Gold 500 / Platinum 1000). Keeps ETISALAT + Post Paid Plans keywords."""
+    plan = TIER_PLAN.get(tier, TIER_PLAN["silver"])
+    price = TIER_PRICE.get(tier, GRID_FROM_PRICE)
     number_lines = "\n".join(f"• {n}" for n in numbers_display[:8])
+    head = f"👑 {plan['label'].upper()} Etisalat VIP Numbers"
+    if pattern_label:
+        head += f" — {pattern_label}, multiple in stock"
     return (
-        f"{opener}\n\n"
+        f"{head}:\n"
         f"{number_lines}\n\n"
-        f"✓ {PLAN_LABEL} — {PLAN_DETAILS}, from AED {GRID_FROM_PRICE}/mo\n"
-        f"✓ Premium ETISALAT Numbers / Golden Numbers — Hand-picked\n"
+        f"Comes with the {plan['plan']} (AED {price:,}/mo) — {plan['perks']}.\n"
+        f"✓ Official ETISALAT Channel Partner · Premium / Golden / VIP Numbers\n"
         f"✓ Free UAE Delivery — Instant Activation\n"
-        f"✓ Plans from AED {GRID_FROM_PRICE} include a free Silver number (Gold priced separately)\n\n"
-        f"{cta}\n"
+        f"✓ Etisalat postpaid numbers in Dubai, Abu Dhabi, Sharjah & across the UAE\n\n"
+        f"Message the number you want — Call or WhatsApp {WA_DISPLAY}\n"
         f"uaepremiumnumbers.com"
     )
 
 
-def grid_caption_ig(grid_id: str, numbers_display: list[str], brand_variant: str) -> str:
-    """IG caption — opener + numbers + key bullets + tag stack."""
-    rng = random.Random(grid_id + "-ig")
-    opener = rng.choice(GRID_IG_OPENERS)
-    cta = rng.choice(GRID_FB_CTAS).format(wa=WA_DISPLAY)
+def grid_caption_ig(grid_id: str, numbers_display: list[str], brand_variant: str,
+                    tier: str = "silver", pattern_label: str = "") -> str:
+    """IG caption — single-tier PATTERN card + tag stack."""
+    plan = TIER_PLAN.get(tier, TIER_PLAN["silver"])
+    price = TIER_PRICE.get(tier, GRID_FROM_PRICE)
     number_lines = "\n".join(f"• {n}" for n in numbers_display[:8])
+    head = f"👑 {plan['label'].upper()} Etisalat VIP Numbers"
+    if pattern_label:
+        head += f" · {pattern_label} · multiple in stock"
     return (
-        f"{opener}\n"
-        f"{PLAN_LABEL} · {PLAN_DETAILS} · from AED {GRID_FROM_PRICE}/mo\n\n"
+        f"{head}\n"
+        f"{plan['plan']} · AED {price:,}/mo · {plan['perks']}\n\n"
         f"{number_lines}\n\n"
-        f"✓ Premium ETISALAT Numbers / Golden Numbers\n"
+        f"✓ Official ETISALAT Channel Partner\n"
         f"✓ Free UAE Delivery · Instant Activation\n\n"
-        f"{cta}\n\n"
+        f"Message the number you want — WhatsApp {WA_DISPLAY}\n\n"
         f"{GRID_IG_HASHTAGS}"
     )
 
 
-def pick_grid_numbers(all_rows: list[dict], count: int, numbers_per_card: int,
-                      seed_str: str) -> list[list[str]]:
-    """Pick `count` grids, each with `numbers_per_card` unique numbers.
-    Across grids, numbers can repeat (user instruction 2026-05-08: 'doesn't matter if
-    duplicates happen, post as much as you can'). Pool is top-200 scored numbers from
-    full sheet — NO exclusion against the `used` set, so previously-posted numbers
-    can appear again in grids."""
-    rng = random.Random(f"{seed_str}-grid")
-    scored = []
+def pat_label(p: str) -> str:
+    """'777' -> 'TRIPLE 7'; '8888' -> 'QUAD 8'."""
+    return f"{'QUAD' if len(p) >= 4 else 'TRIPLE'} {p[0]}"
+
+
+def todays_tiers(count: int) -> list[str]:
+    """Silver-led grid tiers (real sales ~78% Silver), mirroring GN: 3 Silver + 1 Gold + 1
+    rotating (Gold, or a Platinum test on Mon/Thu). Trims/extends to `count`."""
+    if count <= 0:
+        return []
+    base = ["silver", "silver", "silver", "gold", "gold"]
+    if datetime.now().weekday() in PLATINUM_WEEKDAYS:
+        base[-1] = "platinum"
+    if count <= len(base):
+        return base[:count]
+    return base + ["silver"] * (count - len(base))
+
+
+def _inv_by_tier(all_rows: list[dict]) -> dict[str, list[str]]:
+    """Group AVAILABLE digits by tier (lowercased category) for pattern selection."""
+    inv: dict[str, list[str]] = {"silver": [], "gold": [], "platinum": []}
     for r in all_rows:
-        s, _ = score_number(r["digits"], r["category"])
-        scored.append({"digits": r["digits"], "category": r["category"], "score": s})
-    scored.sort(key=lambda x: -x["score"])
-    pool_size = max(200, count * numbers_per_card * 6)
-    pool = scored[:pool_size]
-    out = []
-    for _ in range(count):
-        sample = rng.sample(pool, k=numbers_per_card)
-        out.append([x["digits"] for x in sample])
+        c = (r.get("category") or "").lower()
+        if c in inv:
+            inv[c].append(r["digits"])
+    return inv
+
+
+def _shuffle_054_first(pool: list[str], used: set[str], n: int, rng: random.Random) -> list[str]:
+    """054-first, shuffled so combos vary every run; PREFER fresh (not already used this batch)
+    but FALL BACK to reuse from the same pattern pool so a deep pool never runs out."""
+    g054 = [d for d in pool if d[:3] == "054"]
+    goth = [d for d in pool if d[:3] != "054"]
+    rng.shuffle(g054)
+    rng.shuffle(goth)
+    ordered = g054 + goth
+    fresh = [d for d in ordered if d not in used]
+    return (fresh if len(fresh) >= min(n, 3) else ordered)[:n]
+
+
+def pick_pattern(tier: str, inv: dict, used: set[str], pat_cursor: dict,
+                 rng: random.Random, n: int):
+    """Pick (label, [numbers], [endings]) for a tier — mirrors the proven GN engine.
+    (1) Prefer a SINGLE deep hot ending (purest pattern-class, e.g. all 777 — works for
+    Silver's big pool), rotating which ending each run via pat_cursor. (2) Else a GROUPED
+    fallback matching ANY of the tier's hot endings (robust for thin Gold/Platinum)."""
+    pats = TIER_PATTERNS[tier]
+    cur = pat_cursor.get(tier, 0)
+    avail = inv.get(tier, [])
+    for off in range(len(pats)):
+        p = pats[(cur + off) % len(pats)]
+        sub_pool = [d for d in avail if d.endswith(p)]
+        if len(sub_pool) >= max(n, 3):
+            pat_cursor[tier] = (cur + off + 1) % len(pats)
+            return pat_label(p), _shuffle_054_first(sub_pool, used, n, rng), [p]
+    grouped = [d for d in avail if any(d.endswith(q) for q in pats)]
+    if len(grouped) >= 3:
+        pat_cursor[tier] = (cur + 1) % len(pats)
+        lbl = "QUAD 8 / 7" if tier == "platinum" else "TRIPLE & QUAD"
+        return lbl, _shuffle_054_first(grouped, used, n, rng), list(pats)
+    return None, [], []
+
+
+def _brand_day_cursor() -> dict:
+    """Per-tier starting offset into TIER_PATTERNS, phased by brand + day so sister brands
+    diverge. Identical formula in every brand's generator (only BRAND_INDEX differs) →
+    guaranteed-different lead ending per brand per day, rotating daily."""
+    base = date.today().toordinal()
+    return {t: (base + BRAND_INDEX) % len(p) for t, p in TIER_PATTERNS.items()}
+
+
+def pick_grid_numbers(all_rows: list[dict], count: int, numbers_per_card: int,
+                      seed_str: str) -> list[dict]:
+    """PATTERN-CLASS grids: `count` single-tier cards, Silver-led, each a set of
+    `numbers_per_card` in-stock numbers sharing ONE hot ending. Returns a list of
+    {numbers, tier, pattern_label}. Cross-brand phasing (see BRAND_INDEX) makes each page
+    lead with a different ending. A tier that can't fill falls back to Silver (deep pool)
+    so a slot is never silently dropped."""
+    rng = random.Random(f"{seed_str}-pattern")
+    inv = _inv_by_tier(all_rows)
+    pat_cursor = _brand_day_cursor()
+    used: set[str] = set()
+    out: list[dict] = []
+    for want in todays_tiers(count):
+        tier = want
+        label, nums, _ = pick_pattern(tier, inv, used, pat_cursor, rng, numbers_per_card)
+        if (not label or len(nums) < 3) and tier != "silver":
+            tier = "silver"
+            label, nums, _ = pick_pattern(tier, inv, used, pat_cursor, rng, numbers_per_card)
+        if not label or len(nums) < 3:
+            continue
+        for d in nums:
+            used.add(d)
+        out.append({"numbers": nums, "tier": tier, "pattern_label": label})
     return out
 
 
@@ -448,9 +556,10 @@ def pick_brand_variants_for_day(count: int, seed_str: str,
 
 def build_grid_post_json(post_id: str, digits_list: list[str], brand_variant: str,
                           sched_at_iso: str, image_url: str,
-                          story_url: str = "", story_path: str = "") -> dict:
-    """JSON envelope for a grid post — mirrors build_post_json structure but
-    carries digits_list + brand_variant + type='grid' for downstream identification."""
+                          story_url: str = "", story_path: str = "",
+                          tier: str = "silver", pattern_label: str = "") -> dict:
+    """JSON envelope for a pattern-class grid post — carries digits_list + brand_variant +
+    tier + pattern_label + type='grid' for downstream identification / re-render."""
     numbers_display = [format_display(d) for d in digits_list]
     return {
         "id": post_id,
@@ -459,8 +568,8 @@ def build_grid_post_json(post_id: str, digits_list: list[str], brand_variant: st
         "scheduled_at": sched_at_iso,
         "scheduled_date": sched_at_iso[:10],
         "platforms": ["facebook", "instagram"],
-        "caption_fb": grid_caption_fb(post_id, numbers_display, brand_variant),
-        "caption_ig": grid_caption_ig(post_id, numbers_display, brand_variant),
+        "caption_fb": grid_caption_fb(post_id, numbers_display, brand_variant, tier, pattern_label),
+        "caption_ig": grid_caption_ig(post_id, numbers_display, brand_variant, tier, pattern_label),
         "image_url": image_url,
         "story_url": story_url,    # CDN url of the 9:16 story card (IG story)
         "story_path": story_path,  # local file of the story card (FB story upload)
@@ -468,7 +577,9 @@ def build_grid_post_json(post_id: str, digits_list: list[str], brand_variant: st
         "status": "approved",
         "digits_list": digits_list,
         "brand_variant": brand_variant,
-        "from_price": GRID_FROM_PRICE,
+        "tier": tier,
+        "pattern_label": pattern_label,
+        "from_price": TIER_PRICE.get(tier, GRID_FROM_PRICE),
     }
 
 
@@ -935,20 +1046,36 @@ def main(force=False):
     grid_dir_fs = os.path.join(month_dir_fs, "grids")
     os.makedirs(grid_dir_fs, exist_ok=True)
     grid_payloads: list[tuple[str, list[str], str, str]] = []
-    for i, (digits_list, brand_variant) in enumerate(zip(grid_number_sets, grid_brand_variants)):
+    # Rotate the 5 creative palettes per grid (square + story share ONE palette),
+    # continuing across days via state["palette_cursor"] — matches gn/ppp/vipd.
+    pcur = state.get("palette_cursor", 0)
+    for i, (gspec, brand_variant) in enumerate(zip(grid_number_sets, grid_brand_variants)):
+        digits_list = gspec["numbers"]
+        g_tier = gspec["tier"]
+        g_plabel = gspec["pattern_label"]
         grid_post_id = grid_ids[i]
         grid_filename = f"{grid_post_id}.jpg"
         grid_out_path = os.path.join(grid_dir_fs, grid_filename)
+        palette = PALETTE_ORDER[(pcur + i) % len(PALETTE_ORDER)]
+        # Pattern label shown on BOTH sizes (square reuses the subheadline slot; the
+        # per-cell pill carries the tier). Tier-matched price (never a mismatch).
+        sub = f"{TIER_PLAN[g_tier]['label'].upper()} · {g_plabel} · MULTIPLE IN STOCK"
         render_grid_card(
             numbers=digits_list,
             brand_variant=brand_variant,
-            from_price=GRID_FROM_PRICE,
+            from_price=TIER_PRICE[g_tier],
+            subheadline=sub,
+            tier=g_tier,
+            palette=palette,
             out_path=grid_out_path,
         )
         render_grid_story(digits_list,
                           os.path.join(story_dir_fs, grid_filename),
-                          brand_variant=brand_variant, from_price=GRID_FROM_PRICE)
-        grid_payloads.append((grid_post_id, digits_list, brand_variant, grid_filename))
+                          brand_variant=brand_variant, from_price=TIER_PRICE[g_tier],
+                          subheadline=sub, palette=palette)
+        grid_payloads.append((grid_post_id, digits_list, brand_variant, grid_filename,
+                              g_tier, g_plabel))
+    state["palette_cursor"] = (pcur + len(grid_number_sets)) % len(PALETTE_ORDER)
 
     push_cards(month_dir_fs, count=total_picked)
     logging.info(f"Pushed {len(singles)} singles + {len(grid_payloads)} grids to {month_subdir}/")
@@ -982,13 +1109,14 @@ def main(force=False):
             label = payload["display"]
             tier = payload["category"]
         else:
-            _, digits_list, brand_variant, grid_filename = payload
+            _, digits_list, brand_variant, grid_filename, g_tier, g_plabel = payload
             image_url = f"{CARDS_PUBLIC_BASE}/{month_subdir}/grids/{grid_filename}"
             story_url = f"{CARDS_PUBLIC_BASE}/{month_subdir}/stories/{grid_filename}"
             story_path = os.path.join(story_dir_fs, grid_filename)
             post = build_grid_post_json(post_id, digits_list, brand_variant, sched_at, image_url,
-                                        story_url=story_url, story_path=story_path)
-            label = f"GRID[{brand_variant}] · {len(digits_list)} numbers"
+                                        story_url=story_url, story_path=story_path,
+                                        tier=g_tier, pattern_label=g_plabel)
+            label = f"{g_tier.capitalize()} {g_plabel} x{len(digits_list)}"
             tier = "Grid"
 
         with open(os.path.join(APPROVED, f"{post_id}.json"), "w", encoding="utf-8") as f:
@@ -1008,8 +1136,8 @@ def main(force=False):
         "batch": state["batch"],
         "batch_day": state["batch_day"],
         "count": len(rows_for_email),
-        "singles": sum(1 for _, _, lbl, _ in rows_for_email if not lbl.startswith("GRID")),
-        "grids": sum(1 for _, _, lbl, _ in rows_for_email if lbl.startswith("GRID")),
+        "singles": sum(1 for _, _, _, t in rows_for_email if t != "Grid"),
+        "grids": sum(1 for _, _, _, t in rows_for_email if t == "Grid"),
         "first_id": rows_for_email[0][0] if rows_for_email else "",
         "last_id":  rows_for_email[-1][0] if rows_for_email else "",
     })
@@ -1019,7 +1147,7 @@ def main(force=False):
     # Per Malik 2026-05-10: emails fire only when a post actually goes live
     # (meta_poster.email_post_success) or on real failures. Scheduling /
     # batch / queue summaries are noise. See memory/feedback-email-policy.md.
-    grid_count = sum(1 for _, _, label, _ in rows_for_email if label.startswith("GRID"))
+    grid_count = sum(1 for _, _, _, t in rows_for_email if t == "Grid")
     single_count = len(rows_for_email) - grid_count
     print(f"Generated {len(rows_for_email)} posts ({single_count} singles, {grid_count} grids) "
           f"for {target_date.isoformat()}")

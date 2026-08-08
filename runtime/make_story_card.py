@@ -14,6 +14,7 @@ import argparse, os
 from PIL import Image, ImageDraw
 
 import make_card as mc  # palette, find_font, text_size, make_qr, format_display, WA_DISPLAY
+import make_grid_card as mgc  # PALETTES / PALETTE_ORDER for grid-story palette rotation
 
 W, H = 1080, 1920
 
@@ -123,26 +124,39 @@ def render_story(digits: str, tier: str, out_path: str,
 def render_grid_story(numbers: list[str], out_path: str,
                       brand_variant: str = "uaepremiumnumbers",
                       from_price: int = 188,
-                      site: str = "uaepremiumnumbers.com") -> str:
+                      palette: str | None = None,
+                      site: str = "uaepremiumnumbers.com",
+                      subheadline: str | None = None) -> str:
     """Vertical 1080x1920 STORY for a multi-number grid post — the story
-    counterpart to make_grid_card's 1:1 feed card. Numbers stacked in cells."""
-    img = Image.new("RGB", (W, H), mc.BG)
+    counterpart to make_grid_card's 1:1 feed card. Numbers stacked in cells.
+
+    Palette-aware so a grid post's square + story share ONE palette (matches
+    the gn/ppp/vipd grids, which rotate palettes in both sizes). Colours come
+    from make_grid_card.PALETTES; the single-card render_story stays red/white.
+    ON_ACCENT is the dark text that sits on the bright accent ribbons/stripes.
+    """
+    pal = mgc.PALETTES.get(palette or "midnight-gold", mgc.PALETTES["midnight-gold"])
+    BG, RED, RED_DARK = pal["BG"], pal["RED"], pal["RED_DARK"]
+    CELL, HAIR, INK = pal["CELL_PANEL"], pal["HAIRLINE"], pal["INK"]
+    TEXT_BODY, TEXT_DARK, ON_ACCENT = pal["TEXT_BODY"], pal["TEXT_DARK"], pal["ON_ACCENT"]
+
+    img = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(img)
 
     # Top ribbon
     rib_h = 130
-    draw.rectangle([0, 0, W, rib_h], fill=mc.RED)
-    draw.line([(0, rib_h), (W, rib_h)], fill=mc.RED_DARK, width=2)
+    draw.rectangle([0, 0, W, rib_h], fill=RED)
+    draw.line([(0, rib_h), (W, rib_h)], fill=RED_DARK, width=2)
     brand_font = mc.find_font(["seguisb.ttf", "arialbd.ttf", "segoeui.ttf"], 40)
-    _centered(draw, "UAE  PREMIUM  NUMBERS", brand_font, (rib_h - 40) // 2 - 2, mc.WHITE, ls=8)
+    _centered(draw, "UAE  PREMIUM  NUMBERS", brand_font, (rib_h - 40) // 2 - 2, ON_ACCENT, ls=8)
 
     # Header
     hf = mc.find_font(["georgiab.ttf", "arialbd.ttf"], 48)
-    _centered(draw, "Premium ETISALAT Numbers", hf, 205, mc.RED)
+    _centered(draw, "Premium ETISALAT Numbers", hf, 205, RED)
     sf = mc.find_font(["seguisb.ttf", "arialbd.ttf"], 30)
-    _centered(draw, "Available Now · Postpaid Plans", sf, 280, mc.TEXT_BODY)
+    _centered(draw, subheadline or "Available Now · Postpaid Plans", sf, 280, TEXT_BODY)
 
-    # Authority badge (green = trust)
+    # Authority badge (green = trust — constant across palettes, white text)
     badge = "OFFICIAL ETISALAT CHANNEL PARTNER"
     bgf = mc.find_font(["seguisb.ttf", "arialbd.ttf"], 24)
     bw, bh = mc.text_size(draw, badge, bgf)
@@ -158,32 +172,32 @@ def render_grid_story(numbers: list[str], out_path: str,
     for i, d in enumerate(nums):
         cy = top + i * (cell_h + gap)
         draw.rounded_rectangle([cx0, cy, cx0 + cw, cy + cell_h], radius=16,
-                               fill=mc.BG_SOFT, outline=mc.HAIRLINE, width=1)
-        draw.rounded_rectangle([cx0, cy, cx0 + 16, cy + cell_h], radius=6, fill=mc.RED)
+                               fill=CELL, outline=HAIR, width=1)
+        draw.rounded_rectangle([cx0, cy, cx0 + 16, cy + cell_h], radius=6, fill=RED)
         disp = mc.format_display(d)
         nf = _fit_font(draw, disp, ["georgiab.ttf", "arialbd.ttf"], 66, 40, 4, cw - 90)
         tw, th = mc.text_size(draw, disp, nf)
-        draw.text((cx0 + (cw - tw) // 2, cy + (cell_h - th) // 2 - 8), disp, font=nf, fill=mc.INK)
+        draw.text((cx0 + (cw - tw) // 2, cy + (cell_h - th) // 2 - 8), disp, font=nf, fill=INK)
 
     after = top + len(nums) * (cell_h + gap) + 12
     pf = mc.find_font(["georgiab.ttf", "arialbd.ttf"], 42)
-    _centered(draw, f"Starting from {from_price} AED", pf, after, mc.RED)
+    _centered(draw, f"Starting from {from_price} AED", pf, after, RED)
     pdf = mc.find_font(["seguisb.ttf", "arialbd.ttf"], 27)
-    _centered(draw, "Etisalat Postpaid · Non-stop data + 1,000 mins", pdf, after + 54, mc.TEXT_BODY)
+    _centered(draw, "Etisalat Postpaid · Non-stop data + 1,000 mins", pdf, after + 54, TEXT_BODY)
     cf = mc.find_font(["georgiab.ttf", "arialbd.ttf"], 50)
-    _centered(draw, f"WhatsApp {mc.WA_DISPLAY}", cf, after + 108, mc.TEXT_DARK)
+    _centered(draw, f"WhatsApp {mc.WA_DISPLAY}", cf, after + 108, TEXT_DARK)
 
     # Bottom ribbon
     foot_h = 130
     y0 = H - foot_h
-    draw.rectangle([0, y0, W, H], fill=mc.RED)
-    draw.line([(0, y0), (W, y0)], fill=mc.RED_DARK, width=2)
+    draw.rectangle([0, y0, W, H], fill=RED)
+    draw.line([(0, y0), (W, y0)], fill=RED_DARK, width=2)
     domain_font = mc.find_font(["seguisb.ttf", "arialbd.ttf", "segoeui.ttf"], 30)
     wa_font = mc.find_font(["seguisb.ttf", "arialbd.ttf", "segoeui.ttf"], 26)
-    draw.text((80, y0 + (foot_h - 30) // 2 - 2), site, font=domain_font, fill=mc.WHITE)
+    draw.text((80, y0 + (foot_h - 30) // 2 - 2), site, font=domain_font, fill=ON_ACCENT)
     wa_text = f"WhatsApp {mc.WA_DISPLAY}"
     tw2, _ = mc.text_size(draw, wa_text, wa_font)
-    draw.text((W - 80 - tw2, y0 + (foot_h - 26) // 2 - 1), wa_text, font=wa_font, fill=mc.WHITE)
+    draw.text((W - 80 - tw2, y0 + (foot_h - 26) // 2 - 1), wa_text, font=wa_font, fill=ON_ACCENT)
 
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     ext = os.path.splitext(out_path)[1].lower()
@@ -203,10 +217,11 @@ def main():
     p.add_argument("--tier", default="Gold")
     p.add_argument("--out", required=True)
     p.add_argument("--plan-aed", type=int, default=188, dest="plan_aed")
+    p.add_argument("--palette", default=None, choices=mgc.PALETTE_ORDER)
     args = p.parse_args()
     if args.numbers:
         nums = [n.strip() for n in args.numbers.split(",") if n.strip()]
-        print(render_grid_story(nums, args.out, from_price=args.plan_aed))
+        print(render_grid_story(nums, args.out, from_price=args.plan_aed, palette=args.palette))
     else:
         print(render_story(args.digits, args.tier, args.out, plan_aed=args.plan_aed))
 

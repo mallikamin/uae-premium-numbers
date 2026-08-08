@@ -1,7 +1,7 @@
 {
   "_comment": "Inventory source sheets — edit this file to swap sources WITHOUT a code change. score_numbers.py picks it up on next cron fire. To revert to hardcoded defaults, rename or delete this file.",
   "sheets": [
-    "1CfIRlk55aGLI2nLBuUFH4pvRu5gT6qSo3aIzh2iDeAo"
+    "1CoG5IYOxKdeTlOqCYuntfXxOUlOFWlSX9AiDB1ZBBQs"
   ],
   "gid": "0"
 }
