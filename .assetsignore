@@ -59,6 +59,21 @@ partner-tracking-api/*.log
 partner-tracking-api/uvicorn.*.log
 
 # --- Internal docs (not for public consumption) ---
+# 2026-08-30: _context/, _files/ and the generator dirs were NOT listed here, so
+# any deploy would have published the whole knowledge base and every build
+# script. runtime/sheets.json was in fact live at /runtime/sheets.json.
+_context/
+_files/
+_archive/
+STATE.md
+CLAUDE.md
+CONTINUATION_*.md
+NOTES_*.md
+HANDOFF*.md
+CREDENTIALS*.md
+README*.md
+runtime/
+social/
 ERROR_LOG.md
 DOCUMENTATION.md
 AI_SEO_EXECUTION_PLAN.md
@@ -69,6 +84,9 @@ PAUSE_CHECKPOINT_*.md
 PROBIZ.docx
 
 # --- Build / generation scripts (not meant to be downloadable) ---
+# No .py belongs on the public site, ever (same rule as goldennummbers).
+*.py
+**/*.py
 generate_ads.py
 generate_assets.py
 

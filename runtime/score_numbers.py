@@ -26,9 +26,10 @@ from pathlib import Path
 # To swap inventory sources without a code change or sync.sh, just edit
 # sheets.json on loom-edge — the next cron run picks it up automatically.
 _DEFAULT_SHEETS = [
-    # 2026-07-13: master sheet re-issued (old 1YVz emptied). Real source of truth
-    # at runtime is sheets.json next to this file; this is the last-resort fallback.
-    "1CoG5IYOxKdeTlOqCYuntfXxOUlOFWlSX9AiDB1ZBBQs",
+    # 2026-08-30: master re-issued again (the 1CoG5 IMPORTRANGE mirror died #REF!).
+    # Real source of truth at runtime is sheets.json next to this file; this is the
+    # last-resort fallback.
+    "1duUVd4qPiKOqAoeNQ6uNB3-zLm7DaeBFAGkeVLeGgtA",
 ]
 _DEFAULT_GID = "0"
 
@@ -253,7 +254,8 @@ def parse_csv(csv_text: str) -> list[dict]:
         out.append({
             "digits": with_zero,
             "category": {"gold": "Gold", "silver": "Silver", "platinum": "Platinum"}[cl],
-            "msisdn": (row.get("MSISDN") or "").strip(),
+            # 2026-08-30 sheet labels the column "MSDN".
+            "msisdn": (row.get("MSISDN") or row.get("MSDN") or "").strip(),
             "code": (row.get("Code") or "").strip(),
         })
     return out

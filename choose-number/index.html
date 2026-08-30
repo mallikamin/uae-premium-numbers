@@ -1262,7 +1262,7 @@ a { color: inherit; }
    sheets are merged and deduped by digits.
    ======================================== */
 var SHEETS = [
-  { id: '1CoG5IYOxKdeTlOqCYuntfXxOUlOFWlSX9AiDB1ZBBQs', gid: '0' }
+  { id: '1duUVd4qPiKOqAoeNQ6uNB3-zLm7DaeBFAGkeVLeGgtA', gid: '0' }
 ];
 function buildCsvUrls(sheet) {
   var base = 'https://docs.google.com/spreadsheets/d/' + sheet.id;
@@ -1727,15 +1727,21 @@ function parseCSV(csv) {
     return String(h || '').trim().toLowerCase();
   });
 
-  function col(name, fallbackIndex) {
-    var idx = header.indexOf(name);
-    return idx !== -1 ? idx : fallbackIndex;
+  // Accept header aliases, the supplier's sheets label the same columns differently
+  // (2026-08-30 sheet uses "MSDN" and "Without 971" for MSISDN / Without Zero).
+  function col(names, fallbackIndex) {
+    if (typeof names === 'string') names = [names];
+    for (var c = 0; c < names.length; c++) {
+      var idx = header.indexOf(names[c]);
+      if (idx !== -1) return idx;
+    }
+    return fallbackIndex;
   }
 
   var idxCategory = col('category', 1);
-  var idxMsisdn = col('msisdn', 2);
+  var idxMsisdn = col(['msisdn', 'msdn'], 2);
   var idxWithZero = col('with zero', 3);
-  var idxWithoutZero = col('without zero', 4);
+  var idxWithoutZero = col(['without zero', 'without 971'], 4);
   var idxStatus = col('status', 5);
 
   for (var i = 1; i < lines.length; i++) {
