@@ -2,6 +2,13 @@ name = "uae-premium-numbers"
 main = "worker.js"
 compatibility_date = "2024-12-18"
 
+# 2026-09-15: the live domain is this Worker (GitHub Pages retired). Declared
+# here so every `wrangler deploy` keeps the custom domain attached. `www` is
+# added once its GitHub-era CNAME is removed from DNS.
+routes = [
+  { pattern = "uaepremiumnumbers.com", custom_domain = true }
+]
+
 # Serve everything except /api/* as static assets from the repo root.
 # Worker handles /api/tiktok-event; all other paths fall through to ASSETS.
 [assets]

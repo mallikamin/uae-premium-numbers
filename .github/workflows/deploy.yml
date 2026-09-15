@@ -1,0 +1,36 @@
+name: Deploy to Cloudflare Workers
+
+# 2026-09-15: uaepremiumnumbers.com moved off GitHub Pages (custom domain
+# could not be bound: "already taken" stale claim since 08-30) onto the
+# uae-premium-numbers Worker with static assets. From this date the live
+# site is whatever this workflow last deployed from `main`. A push that is
+# not deployed is not live. Mirrors goldennummbers' deploy.yml.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cf-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # wrangler 4.x requires Node >= 22 (hard-fails on 20).
+          node-version: '22'
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # wrangler-action@v3 defaults to wrangler 3.90.0, which silently
+          # ignores newer [assets] fields. Keep 4.x so wrangler.toml is
+          # honoured as written (same pin as goldennummbers).
+          wranglerVersion: "4.93.0"
