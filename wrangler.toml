@@ -2,12 +2,12 @@ name = "uae-premium-numbers"
 main = "worker.js"
 compatibility_date = "2024-12-18"
 
-# 2026-09-15: the live domain is this Worker (GitHub Pages retired). Declared
-# here so every `wrangler deploy` keeps both custom domains attached.
-routes = [
-  { pattern = "uaepremiumnumbers.com", custom_domain = true },
-  { pattern = "www.uaepremiumnumbers.com", custom_domain = true }
-]
+# 2026-09-15: the live domain is this Worker (GitHub Pages retired). The two
+# custom domains (apex + www) are attached in the Cloudflare dashboard under
+# the Worker's Domains tab and are deliberately NOT declared here: declaring
+# `routes` makes `wrangler deploy` call the zone Workers-Routes API, which the
+# CI token has no scope for (run 34996359428 failed with auth code 10000).
+# Dashboard-attached custom domains persist across deploys.
 
 # Serve everything except /api/* as static assets from the repo root.
 # Worker handles /api/tiktok-event; all other paths fall through to ASSETS.
