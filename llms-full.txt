@@ -263,6 +263,7 @@ Guides and answer pages (each carries FAQ markup and cites its sources):
 - https://uaepremiumnumbers.com/how-many-sims-emirates-id/ - SIM limits per Emirates ID, why the cap is per operator, how to audit your own lines
 
 Numbers, buying and selling:
+- https://uaepremiumnumbers.com/golden-numbers-uae/ - golden numbers UAE hub: what they are, Silver/Gold/Platinum tiers with plan pricing, patterns, how to reserve
 - https://uaepremiumnumbers.com/buy-vip-number/ - how buying a VIP number works, tiers and pricing
 - https://uaepremiumnumbers.com/prepaid-numbers-for-sale/ - prepaid numbers listed by their owners
 - https://uaepremiumnumbers.com/sell-your-number/ - list a number for sale, brokered and verified
