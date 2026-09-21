@@ -266,8 +266,16 @@
     try { fbq('init', PIXEL_ID, data); } catch (e) {}
   }
 
+  // 2026-09-21: one tap = one Contact. The floating button (premium.js) reports its own click and the
+  // builder pages' delegated listener reports every wa.me click, so both can fire for the same tap.
+  // A second call inside 800 ms is that same tap: return the first event id instead of firing again.
+  var lastWaTrackAt = 0, lastWaTrackId = '';
+
   function trackWhatsAppClick(ctx, pageContext) {
-    var eid = genEventId();
+    var now = Date.now();
+    if (now - lastWaTrackAt < 800) return lastWaTrackId;
+    lastWaTrackAt = now;
+    var eid = lastWaTrackId = genEventId();
     var category = safe(ctx, 50) || 'cta';
     var page = safe(pageContext, 50) || (typeof location !== 'undefined' ? location.pathname : '');
     if (typeof fbq === 'function') {
