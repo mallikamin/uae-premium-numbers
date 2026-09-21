@@ -7,6 +7,7 @@
  *   GET  /oauth/tiktok/authorize        -> 302 to TikTok consent screen (CSRF state cookie)
  *   GET  /oauth/tiktok/callback         -> exchanges code, displays tokens for admin copy
  *   GET  /r                             -> WhatsApp short-link redirect
+ *   GET  merged pages (MERGED below)    -> 301 to the page that replaced them
  *   everything else                     -> served as static assets from ./  (env.ASSETS)
  *
  * Env (set in Cloudflare dashboard -> Settings -> Variables and Secrets):
@@ -349,9 +350,22 @@ async function handleTikTokOAuthCallback(request, env) {
   }});
 }
 
+// 2026-09-21: pages merged into another page. Their folders are deleted, so no static asset matches and the
+// request reaches this Worker, which answers with a permanent redirect to the page that replaced them.
+const MERGED = {
+  "/uae-esim-number": "/etisalat-esim/",
+  "/etisalat-postpaid-esim": "/etisalat-esim/",
+  "/premium-esim-numbers": "/etisalat-esim/",
+};
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    const merged = MERGED[url.pathname.replace(/\/(index\.html)?$/, "")];
+    if (merged) {
+      return Response.redirect("https://uaepremiumnumbers.com" + merged + url.search, 301);
+    }
 
     if (url.pathname === "/api/tiktok-event") {
       return handleTikTokEvent(request, env);
