@@ -253,9 +253,9 @@ Guides and answer pages (each carries FAQ markup and cites its sources):
 - https://uaepremiumnumbers.com/blog/ - guides hub, everything below grouped by topic
 - https://uaepremiumnumbers.com/postpaid-mobile-plans-uae/ - all 22 postpaid plans in one price ordered index, AED 188 to AED 1,250
 - https://uaepremiumnumbers.com/cheapest-etisalat-postpaid-plan/ - the AED 188 entry plan explained
-- https://uaepremiumnumbers.com/etisalat-plans-under-200-aed/ - every plan under AED 200 compared
+- https://uaepremiumnumbers.com/etisalat-plans-under-200-aed/ - the four plans under AED 200 compared, speed cap vs 20 GB allowance
 - https://uaepremiumnumbers.com/family-mobile-plans-uae/ - several lines on one account, Family Head rules, 10 GB shared pool
-- https://uaepremiumnumbers.com/best-etisalat-plan-for-family/ - single-plan recommendation for a household
+- https://uaepremiumnumbers.com/best-etisalat-plan-for-family/ - which plan for which family member, four households priced line by line
 - https://uaepremiumnumbers.com/etisalat-postpaid-sim-requirements/ - documents and eligibility, Emirates ID plus one of six proofs
 - https://uaepremiumnumbers.com/prepaid-to-postpaid-etisalat/ - converting a prepaid line while keeping the number
 - https://uaepremiumnumbers.com/etisalat-number-transfer-ownership/ - moving a number into another person's name, the five regulated conditions
