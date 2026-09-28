@@ -87,7 +87,7 @@
 
     var a = document.createElement('a');
     a.id = 'upn-wa-float';
-    a.href = 'https://wa.me/971569028087?text=' + encodeURIComponent(msg);
+    a.href = 'https://wa.me/971589907187?text=' + encodeURIComponent(msg);
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.setAttribute('data-cta', 'floating_fab');
